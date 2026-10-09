@@ -102,5 +102,5 @@ results/
 后续优化检索器后，CI 会自动变绿。
 
 ## 一键演示
-``bash
+```bash
 bash demo.sh
