@@ -1,0 +1,54 @@
+name: AI Eval Harness
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run RAG layered eval
+        run: python run.py --task rag-layered --model deepseek --dataset golden-set-8
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+
+      - name: Run Judge calibration
+        run: python run.py --task judge-calibration --model deepseek --dataset judge-calibration-v1
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+
+      - name: Run Agent trajectory
+        run: python run.py --task agent-trajectory --model deepseek --dataset agent-tasks
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+
+      - name: Run Prompt injection
+        run: python run.py --task prompt-injection --model deepseek --dataset injection-cases
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+
+      - name: Check quality gate
+        run: python check_gate.py
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-results
+          path: results/
+          retention-days: 30
