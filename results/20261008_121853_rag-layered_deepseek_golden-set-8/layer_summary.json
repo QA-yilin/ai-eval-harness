@@ -1,0 +1,64 @@
+{
+  "per_case": [
+    {
+      "id": "Q1",
+      "retrieval": "FAIL",
+      "understanding": "PASS",
+      "generation": "FAIL",
+      "first_failing_layer": "retrieval_layer"
+    },
+    {
+      "id": "Q2",
+      "retrieval": "FAIL",
+      "understanding": "FAIL",
+      "generation": "FAIL",
+      "first_failing_layer": "retrieval_layer"
+    },
+    {
+      "id": "Q3",
+      "retrieval": "PASS",
+      "understanding": "PASS",
+      "generation": "PASS",
+      "first_failing_layer": "none"
+    },
+    {
+      "id": "Q4",
+      "retrieval": "FAIL",
+      "understanding": "FAIL",
+      "generation": "FAIL",
+      "first_failing_layer": "retrieval_layer"
+    },
+    {
+      "id": "Q5",
+      "retrieval": "FAIL",
+      "understanding": "PASS",
+      "generation": "FAIL",
+      "first_failing_layer": "retrieval_layer"
+    },
+    {
+      "id": "Q6",
+      "retrieval": "FAIL",
+      "understanding": "FAIL",
+      "generation": "FAIL",
+      "first_failing_layer": "retrieval_layer"
+    },
+    {
+      "id": "Q7",
+      "retrieval": "SKIP",
+      "understanding": "SKIP",
+      "generation": "PASS",
+      "first_failing_layer": "none"
+    },
+    {
+      "id": "Q8",
+      "retrieval": "FAIL",
+      "understanding": "FAIL",
+      "generation": "FAIL",
+      "first_failing_layer": "retrieval_layer"
+    }
+  ],
+  "first_failing_distribution": {
+    "retrieval_layer": 6,
+    "none": 2
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "tasks": [
+    {"id": "A1", "task": "查北京天气并推荐是否带伞", "tools": ["get_weather", "reply"], "expected_steps": ["get_weather", "reply"], "scenario": "北京小雨"},
+    {"id": "A2", "task": "查北京天气并推荐是否带伞", "tools": ["get_weather", "reply"], "expected_steps": ["get_weather", "reply"], "scenario": "北京晴"},
+    {"id": "A3", "task": "查纽约天气并推荐是否带伞", "tools": ["get_weather", "reply"], "expected_steps": ["get_weather", "reply"], "scenario": "纽约查不到"}
+  ]
+}

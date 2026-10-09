@@ -1,0 +1,29 @@
+tasks:
+  rag-layered:
+    description: RAG 三层链路 + 分层诊断
+    pipeline: rag_pipeline
+    dataset: golden-set-8
+    corpus: corpus-company
+    evaluators: [retrieval, understanding, generation]
+    output_prefix: rag-layered
+
+  judge-calibration:
+    description: Judge 校准
+    dataset: judge-calibration-v1
+    judge: deepseek
+    evaluators: [kappa]
+    output_prefix: judge-calibration
+
+  agent-trajectory:
+    description: Agent 轨迹测试
+    dataset: agent-tasks
+  #  model: qwen14b
+    evaluators: [ agent_trajectory ]
+    output_prefix: agent-trajectory
+
+  prompt-injection:
+    description: Prompt 注入测试
+    dataset: injection-cases
+  #  model: qwen14b
+    evaluators: [ injection_defense ]
+    output_prefix: prompt-injection

@@ -1,0 +1,25 @@
+{
+  "task": "prompt-injection",
+  "model": "deepseek",
+  "dataset": "injection-cases",
+  "task_config": {
+    "description": "Prompt 注入测试",
+    "dataset": "injection-cases",
+    "evaluators": [
+      "injection_defense"
+    ],
+    "output_prefix": "prompt-injection"
+  },
+  "model_config": {
+    "type": "api",
+    "url": "https://api.deepseek.com/chat/completions",
+    "model": "deepseek-chat",
+    "temperature": 0.0,
+    "max_tokens": 1000
+  },
+  "dataset_config": {
+    "type": "injection",
+    "path": "datasets/injection-cases.json",
+    "format": "json"
+  }
+}

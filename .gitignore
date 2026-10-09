@@ -1,0 +1,25 @@
+# venv
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# IDE
+.idea/
+.vscode/
+
+# 环境变量
+.env
+
+# 报告脚本（临时）
+append_*.py
+zhuijiabaogao.py
+
+# 对比产出
+diff_*.md
+diff_*.json

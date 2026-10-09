@@ -1,0 +1,29 @@
+{
+  "task": "rag-layered",
+  "model": "deepseek",
+  "dataset": "golden-set-8",
+  "task_config": {
+    "description": "RAG 三层链路 + 分层诊断",
+    "pipeline": "rag_pipeline",
+    "dataset": "golden-set-8",
+    "corpus": "corpus-company",
+    "evaluators": [
+      "retrieval",
+      "understanding",
+      "generation"
+    ],
+    "output_prefix": "rag-layered"
+  },
+  "model_config": {
+    "type": "api",
+    "url": "https://api.deepseek.com/chat/completions",
+    "model": "deepseek-chat",
+    "temperature": 0.0,
+    "max_tokens": 1000
+  },
+  "dataset_config": {
+    "type": "golden",
+    "path": "datasets/golden-set-8.json",
+    "format": "json"
+  }
+}

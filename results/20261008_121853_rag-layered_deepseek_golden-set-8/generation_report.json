@@ -1,0 +1,65 @@
+{
+  "layer": "generation",
+  "per_case": [
+    {
+      "id": "Q1",
+      "is_refusal": false,
+      "status": "FAIL",
+      "fail_reasons": [
+        "low_faithfulness"
+      ]
+    },
+    {
+      "id": "Q2",
+      "is_refusal": true,
+      "status": "FAIL",
+      "fail_reasons": [
+        "wrong_refusal"
+      ]
+    },
+    {
+      "id": "Q3",
+      "is_refusal": false,
+      "status": "PASS",
+      "fail_reasons": []
+    },
+    {
+      "id": "Q4",
+      "is_refusal": true,
+      "status": "FAIL",
+      "fail_reasons": [
+        "wrong_refusal"
+      ]
+    },
+    {
+      "id": "Q5",
+      "is_refusal": false,
+      "status": "FAIL",
+      "fail_reasons": [
+        "low_faithfulness"
+      ]
+    },
+    {
+      "id": "Q6",
+      "is_refusal": true,
+      "status": "FAIL",
+      "fail_reasons": [
+        "wrong_refusal"
+      ]
+    },
+    {
+      "id": "Q7",
+      "is_refusal": true,
+      "status": "PASS",
+      "fail_reasons": []
+    },
+    {
+      "id": "Q8",
+      "is_refusal": true,
+      "status": "FAIL",
+      "fail_reasons": [
+        "wrong_refusal"
+      ]
+    }
+  ]
+}

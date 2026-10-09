@@ -1,0 +1,26 @@
+{
+  "task": "judge-calibration",
+  "model": "deepseek",
+  "dataset": "judge-calibration-v1",
+  "task_config": {
+    "description": "Judge 校准",
+    "dataset": "judge-calibration-v1",
+    "judge": "deepseek",
+    "evaluators": [
+      "kappa"
+    ],
+    "output_prefix": "judge-calibration"
+  },
+  "model_config": {
+    "type": "api",
+    "url": "https://api.deepseek.com/chat/completions",
+    "model": "deepseek-chat",
+    "temperature": 0.0,
+    "max_tokens": 1000
+  },
+  "dataset_config": {
+    "type": "calibration",
+    "path": "datasets/judge-calibration-set-v1.jsonl",
+    "format": "jsonl"
+  }
+}

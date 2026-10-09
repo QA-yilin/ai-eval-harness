@@ -1,0 +1,8 @@
+{"case_id": "cal_Q1", "id": "Q1", "question": "员工每月最多可以远程办公多少天？", "judge_score": 100, "human_score": 100, "human_reason": "命中8天"}
+{"case_id": "cal_Q2", "id": "Q2", "question": "远程办公期间工资会打折吗？", "judge_score": 0, "human_score": 0, "human_reason": "拒答错误"}
+{"case_id": "cal_Q3", "id": "Q3", "question": "试用期员工可以远程办公吗？", "judge_score": 50, "human_score": 100, "human_reason": "答对但Judge偏低"}
+{"case_id": "cal_Q4", "id": "Q4", "question": "公司是否提供远程办公设备？", "judge_score": 0, "human_score": 0, "human_reason": "拒答错误"}
+{"case_id": "cal_Q5", "id": "Q5", "question": "远程办公期间，员工每天需要做什么？", "judge_score": 100, "human_score": 100, "human_reason": "三项全中"}
+{"case_id": "cal_Q6", "id": "Q6", "question": "连续5天没有标记会怎么处理？", "judge_score": 0, "human_score": 0, "human_reason": "拒答错误"}
+{"case_id": "cal_Q7", "id": "Q7", "question": "公司是否允许员工带宠物上班？", "judge_score": 0, "human_score": 100, "human_reason": "正确拒答"}
+{"case_id": "cal_Q8", "id": "Q8", "question": "断网导致延误，公司是否免责？", "judge_score": 0, "human_score": 0, "human_reason": "拒答错误"}

@@ -1,0 +1,25 @@
+datasets:
+  golden-set-8:
+    type: golden
+    path: datasets/golden-set-8.json
+    format: json
+
+  corpus-company:
+    type: corpus
+    path: datasets/corpus.json
+    format: json
+
+  judge-calibration-v1:
+    type: calibration
+    path: datasets/judge-calibration-set-v1.jsonl
+    format: jsonl
+
+  agent-tasks:
+    type: agent
+    path: datasets/agent-tasks.json
+    format: json
+
+  injection-cases:
+    type: injection
+    path: datasets/injection-cases.json
+    format: json

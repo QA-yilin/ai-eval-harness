@@ -1,0 +1,70 @@
+{
+  "layer": "understanding",
+  "per_case": [
+    {
+      "id": "Q1",
+      "reranking_delta": 0.0,
+      "reranking_error": false,
+      "status": "PASS",
+      "fail_reasons": []
+    },
+    {
+      "id": "Q2",
+      "reranking_delta": -1.0,
+      "reranking_error": true,
+      "status": "FAIL",
+      "fail_reasons": [
+        "reranking_error",
+        "negative_gain"
+      ]
+    },
+    {
+      "id": "Q3",
+      "reranking_delta": 0.0,
+      "reranking_error": false,
+      "status": "PASS",
+      "fail_reasons": []
+    },
+    {
+      "id": "Q4",
+      "reranking_delta": -1.0,
+      "reranking_error": true,
+      "status": "FAIL",
+      "fail_reasons": [
+        "reranking_error",
+        "negative_gain"
+      ]
+    },
+    {
+      "id": "Q5",
+      "reranking_delta": 0.0,
+      "reranking_error": false,
+      "status": "PASS",
+      "fail_reasons": []
+    },
+    {
+      "id": "Q6",
+      "reranking_delta": -0.5,
+      "reranking_error": true,
+      "status": "FAIL",
+      "fail_reasons": [
+        "reranking_error",
+        "negative_gain"
+      ]
+    },
+    {
+      "id": "Q7",
+      "status": "SKIP"
+    },
+    {
+      "id": "Q8",
+      "reranking_delta": -1.0,
+      "reranking_error": true,
+      "status": "FAIL",
+      "fail_reasons": [
+        "reranking_error",
+        "negative_gain"
+      ]
+    }
+  ]
+}

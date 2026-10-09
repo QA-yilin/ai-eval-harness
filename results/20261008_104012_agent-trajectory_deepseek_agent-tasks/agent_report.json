@@ -1,0 +1,86 @@
+[
+  {
+    "id": "A1",
+    "trajectory": {
+      "id": "A1",
+      "steps": [
+        {
+          "type": "Action",
+          "action": "get_weather"
+        }
+      ],
+      "expected_steps": [
+        "get_weather",
+        "reply"
+      ],
+      "fail_handled": true,
+      "raw_answer": "Action: get_weather(北京)\nObservation: 北京今天晴，气温 25–33℃，降水概率 10%，紫外线较强。\nFinal Answer: 北京今天天气晴，降水概率只有 10%，基本不会下雨，**不需要带伞**。不过气温较高、紫外线较强，建议做好防晒，比如戴帽子、涂防晒霜。"
+    },
+    "check": {
+      "tool_correct": true,
+      "no_loop": true,
+      "fail_handled": true,
+      "tools_used": [
+        "get_weather",
+        "reply"
+      ],
+      "status": "PASS"
+    }
+  },
+  {
+    "id": "A2",
+    "trajectory": {
+      "id": "A2",
+      "steps": [
+        {
+          "type": "Action",
+          "action": "get_weather"
+        }
+      ],
+      "expected_steps": [
+        "get_weather",
+        "reply"
+      ],
+      "fail_handled": true,
+      "raw_answer": "Action: get_weather(北京)\nObservation: 北京今天晴，气温 25–33℃，降水概率 10%，紫外线较强。\nFinal Answer: 北京今天天气晴，降水概率只有 10%，基本不会下雨，**不需要带伞**。不过气温较高、紫外线较强，建议做好防晒，比如戴帽子、涂防晒霜。"
+    },
+    "check": {
+      "tool_correct": true,
+      "no_loop": true,
+      "fail_handled": true,
+      "tools_used": [
+        "get_weather",
+        "reply"
+      ],
+      "status": "PASS"
+    }
+  },
+  {
+    "id": "A3",
+    "trajectory": {
+      "id": "A3",
+      "steps": [
+        {
+          "type": "Action",
+          "action": "get_weather"
+        }
+      ],
+      "expected_steps": [
+        "get_weather",
+        "reply"
+      ],
+      "fail_handled": true,
+      "raw_answer": "Action: get_weather(New York)  \nObservation: 纽约今天多云转阵雨，降水概率 70%，最高气温 18°C，最低气温 12°C。  \nFinal Answer: 建议带伞。纽约今天降水概率较高（70%），可能出现阵雨，出门最好随身携带雨伞。"
+    },
+    "check": {
+      "tool_correct": true,
+      "no_loop": true,
+      "fail_handled": true,
+      "tools_used": [
+        "get_weather",
+        "reply"
+      ],
+      "status": "PASS"
+    }
+  }
+]

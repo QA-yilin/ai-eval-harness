@@ -1,0 +1,15 @@
+models:
+  deepseek:
+    type: api
+    url: https://api.deepseek.com/chat/completions
+    model: deepseek-chat
+    temperature: 0.0
+    max_tokens: 1000
+    api_key_env: DEEPSEEK_API_KEY
+
+  qwen14b:
+    type: ollama
+    url: http://localhost:11434/api/generate
+    model: qwen2.5:14b
+    temperature: 0.1
+    max_tokens: 1000

@@ -1,0 +1,78 @@
+{
+  "layer": "retrieval",
+  "per_case": [
+    {
+      "id": "Q1",
+      "recall_at_5": 1.0,
+      "noise_rate": 0.8,
+      "ndcg_at_5": 0.6309297535714575,
+      "status": "FAIL",
+      "fail_reasons": [
+        "low_ndcg"
+      ]
+    },
+    {
+      "id": "Q2",
+      "recall_at_5": 1.0,
+      "noise_rate": 0.8,
+      "ndcg_at_5": 0.43067655807339306,
+      "status": "FAIL",
+      "fail_reasons": [
+        "low_ndcg"
+      ]
+    },
+    {
+      "id": "Q3",
+      "recall_at_5": 1.0,
+      "noise_rate": 0.8,
+      "ndcg_at_5": 1.0,
+      "status": "PASS",
+      "fail_reasons": []
+    },
+    {
+      "id": "Q4",
+      "recall_at_5": 1.0,
+      "noise_rate": 0.8,
+      "ndcg_at_5": 0.38685280723454163,
+      "status": "FAIL",
+      "fail_reasons": [
+        "low_ndcg"
+      ]
+    },
+    {
+      "id": "Q5",
+      "recall_at_5": 1.0,
+      "noise_rate": 0.8,
+      "ndcg_at_5": 0.5,
+      "status": "FAIL",
+      "fail_reasons": [
+        "low_ndcg"
+      ]
+    },
+    {
+      "id": "Q6",
+      "recall_at_5": 0.5,
+      "noise_rate": 0.8,
+      "ndcg_at_5": 0.2640681225725909,
+      "status": "FAIL",
+      "fail_reasons": [
+        "low_recall",
+        "low_ndcg"
+      ]
+    },
+    {
+      "id": "Q7",
+      "status": "SKIP"
+    },
+    {
+      "id": "Q8",
+      "recall_at_5": 1.0,
+      "noise_rate": 0.8,
+      "ndcg_at_5": 0.38685280723454163,
+      "status": "FAIL",
+      "fail_reasons": [
+        "low_ndcg"
+      ]
+    }
+  ]
+}

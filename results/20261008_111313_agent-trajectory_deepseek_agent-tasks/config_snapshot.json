@@ -1,0 +1,25 @@
+{
+  "task": "agent-trajectory",
+  "model": "deepseek",
+  "dataset": "agent-tasks",
+  "task_config": {
+    "description": "Agent 轨迹测试",
+    "dataset": "agent-tasks",
+    "evaluators": [
+      "agent_trajectory"
+    ],
+    "output_prefix": "agent-trajectory"
+  },
+  "model_config": {
+    "type": "api",
+    "url": "https://api.deepseek.com/chat/completions",
+    "model": "deepseek-chat",
+    "temperature": 0.0,
+    "max_tokens": 1000
+  },
+  "dataset_config": {
+    "type": "agent",
+    "path": "datasets/agent-tasks.json",
+    "format": "json"
+  }
+}
