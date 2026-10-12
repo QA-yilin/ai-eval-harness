@@ -11,8 +11,19 @@ class Reporter:
         os.makedirs(self.run_dir, exist_ok=True)
 
     def save_config(self, config):
+        safe = self._mask_sensitive(config)
         with open(os.path.join(self.run_dir, "config_snapshot.json"), "w", encoding="utf-8") as f:
-            json.dump(config, f, ensure_ascii=False, indent=2)
+            json.dump(safe, f, ensure_ascii=False, indent=2)
+
+    def _mask_sensitive(self, obj):
+        if isinstance(obj, dict):
+            return {k: (
+                "***" if any(w in k.lower() for w in ["key", "secret", "token", "password"]) else self._mask_sensitive(
+                    v))
+                    for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [self._mask_sensitive(x) for x in obj]
+        return obj
 
     def save_results(self, name, data):
         path = os.path.join(self.run_dir, f"{name}.json")

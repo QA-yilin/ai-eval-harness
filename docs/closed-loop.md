@@ -45,20 +45,12 @@ python run_diff.py --run-a results/<run_a> --run-b results/<run_b> --out diff.md
 | 结果归档 | 散落 print | 独立 run 目录 + 配置快照 |
 | 可复现 | 否 | 是 |
 
-相关 run：
+相关 run（示例）：
 
-- results/20261008_121853_rag-layered_deepseek_golden-set-8
-- results/20261008_121905_judge-calibration_deepseek_judge-calibration-v1
-- results/20261008_121905_agent-trajectory_deepseek_agent-tasks
-- results/20261008_121910_prompt-injection_deepseek_injection-cases
-
-## 面试话术
-
-"我做的不是一次性评测，而是评测闭环。流程是：跑评测 → 定位问题层 → 改一处 → 重跑 → run_diff 对比 → 判断改善/退化/无变化。
-
-我实际做过的一次改进是把散落脚本封装成 Harness——封装前每类任务一个脚本、配置硬编码、结果散落 print；封装后统一入口、YAML 配置、独立 run 目录 + 配置快照。
-
-后续如果发现检索层是瓶颈，我会用同样的闭环：换更强的检索器 → 重跑 → run_diff 对比 first_failing_layer 变化 → 判断是否保留改动。"
+- 20261008_121853_rag-layered_deepseek_golden-set-8
+- 20261008_121905_judge-calibration_deepseek_judge-calibration-v1
+- 20261008_121905_agent-trajectory_deepseek_agent-tasks
+- 20261008_121910_prompt-injection_deepseek_injection-cases
 
 ## 闭环的价值
 
