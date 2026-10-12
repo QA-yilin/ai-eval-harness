@@ -18,8 +18,10 @@ __pycache__/
 
 # 报告脚本（临时）
 append_*.py
-zhuijiabaogao.py
 
 # 对比产出
 diff_*.md
 diff_*.json
+
+#执行结果
+results/results/

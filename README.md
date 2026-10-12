@@ -104,7 +104,7 @@ results/
 ## 一键演示
 
 ```bash
-bash demo.sh
+bash run_all.sh
 ```
 
 跑四类任务 + 门禁检查。
