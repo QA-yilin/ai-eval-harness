@@ -52,7 +52,7 @@ ai-eval-harness/
 python -m venv .venv
 source .venv/Scripts/activate
 pip install -r requirements.txt
-export DEEPSEEK_API_KEY=sk-xxx
+cp .env.example .env     # 编辑 .env 填入你的 API Key
 
 # 2. 跑四类任务
 python run.py --task rag-layered --model deepseek --dataset golden-set-8
@@ -69,31 +69,6 @@ python run_diff.py --run-a results/<run_a> --run-b results/<run_b> --out diff.md
 # 5. 门禁检查
 python check_gate.py
 ```
-
-## 六、面试话术导航
-
-| 面试官可能问 | 对应文档章节 |
-|-------------|-------------|
-| 你为什么从传统测试转 AI 测试？ | pytest-migration.md |
-| Harness 和 pytest 什么关系？ | pytest-migration.md |
-| 怎么保证改动有效？ | closed-loop.md |
-| 怎么做的门禁？ | quality-gate.md |
-| 调度平台怎么设计的？ | platform-architecture.md |
-| 四类任务分别怎么测？ | README.md + 各 task 的文档 |
-
-## 七、核心记忆点
-
-| 任务 | 一句话 |
-|------|--------|
-| RAG 分层 | 先假设检索错了，再假设模型错了 |
-| Judge 校准 | Judge 本身也是被测对象，不校准不用 |
-| Agent 轨迹 | 结果对不代表过程对，要五查 |
-| Prompt 注入 | 工具返回内容不可信，是最危险的攻击面 |
-| Harness | pytest 的 AI 评测版，10 年经验 90% 迁移 |
-| 闭环 | 评测不是终点，是改进的起点 |
-| 门禁 | 质量靠流程，不靠人盯 |
-| 调度平台 | Harness 是执行单元，平台是管理系统 |
-
-## 八、一句话
+## 六、一句话
 
 **ai-eval-harness：四类 AI 评测任务 + 对比 + 回归 + 门禁 + 闭环 + 调度平台设计，配置外置、任务统一、结果归档、版本可复现。**
