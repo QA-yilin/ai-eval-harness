@@ -13,7 +13,8 @@ python -m venv .venv
 source .venv/Scripts/activate
 pip install -r requirements.txt
 
-export DEEPSEEK_API_KEY=sk-xxx
+cp .env.example .env     # 编辑 .env 填入你的 API Key（本地开发用）
+# GitHub Actions CI 环境下，Key 通过 GitHub Secrets 注入
 python run.py --task rag-layered --model deepseek --dataset golden-set-8
 ```
 
