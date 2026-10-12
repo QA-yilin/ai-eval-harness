@@ -1,3 +1,5 @@
+from dotenv import load_dotenv
+load_dotenv()
 import argparse
 from core.runner import Runner
 
