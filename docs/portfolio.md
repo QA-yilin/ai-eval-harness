@@ -38,7 +38,7 @@ ai-eval-harness/
 
 | 文档 | 内容 |
 |------|------|
-| [`README.md`](../README.md) | 项目说明、快速开始 |
+| [`README.md`](../README) | 项目说明、快速开始 |
 | [`docs/pytest-migration.md`](pytest-migration.md) | pytest 架构迁移：Harness = pytest 的 AI 评测版 |
 | [`docs/closed-loop.md`](closed-loop.md) | 闭环方法论：评测 → 定位 → 改动 → 重跑 → 对比 → 判断 |
 | [`docs/improvement-log.md`](improvement-log.md) | 改进记录：每次改动留档 |
@@ -69,6 +69,3 @@ python run_diff.py --run-a results/<run_a> --run-b results/<run_b> --out diff.md
 # 5. 门禁检查
 python check_gate.py
 ```
-## 六、一句话
-
-**ai-eval-harness：四类 AI 评测任务 + 对比 + 回归 + 门禁 + 闭环 + 调度平台设计，配置外置、任务统一、结果归档、版本可复现。**
