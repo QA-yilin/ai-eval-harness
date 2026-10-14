@@ -2,9 +2,47 @@
 
 > 四类 AI 评测任务 + 对比 + 回归 + 门禁 + 闭环 + 调度平台设计
 
-**📖 作品集导航**： [作品集](docs/portfolio.md) | [pytest 迁移](docs/pytest-migration.md) | [闭环](docs/closed-loop.md) | [改进记录](docs/improvement-log.md) | [调度平台架构](docs/platform-architecture.md) | [门禁标准](docs/quality-gate.md)
+**📖 作品集导航**：[作品集](docs/portfolio.md) | [pytest 迁移](docs/pytest-migration.md) | [闭环](docs/closed-loop.md) | [改进记录](docs/improvement-log.md) | [调度平台架构](docs/platform-architecture.md) | [门禁标准](docs/quality-gate.md)
+
+**📊 五份评测报告**（2026-10）：
+
+- [01_AI评测体系方法论 V1.1](docs/reports/01_AI评测体系方法论_V1.1.pdf)
+- [02_RAG评测集优化报告 V1.0](docs/reports/02_RAG评测集优化报告_V1.0.pdf)
+- [03_重复采样分析报告 V1.0](docs/reports/03_重复采样分析报告_V1.0.pdf)
+- [04_评测指标计算报告 V1.0](docs/reports/04_评测指标计算报告_V1.0.pdf)
+- [05_LLM评测能力对比报告（30题）](docs/reports/05_LLM评测能力对比报告（30题）.pdf)
 
 统一 AI 评测框架，支持 RAG 分层诊断、Judge 校准、Agent 轨迹、Prompt 注入。
+
+## 最新评测结果
+
+### RAG评测（19题，v1.1）
+
+- 覆盖 fact / multi_hop / no_answer / ambiguous / conflict / negation 六种题型
+- Judge 校准一致率 67% → 87%
+- Qwen2.5:14b 93.68 vs DeepSeek 85.79
+- 发现并修复 4 类评测集问题：golden 与原文不对齐、评分标准内部不一致、题型标签错误、Judge 输出不一致
+
+### 重复采样（5题 × 3次）
+
+- DeepSeek Q15a/Q15b std=57.74，不稳定
+- Qwen 全部 std=0，稳定
+- 区分“真实短板”和“随机噪声”
+- 验证“修评分标准能区分评测集问题和模型问题”
+
+### 评测指标
+
+- 分类指标：准确率 / 精确率 / 召回率 / F1
+- 生成指标：幻觉率 / Faithfulness / Context Precision / Recall
+- 评分指标：平均分 / 满分率 / 零分率 / 方差
+- 明确哪些算了、哪些没算、下一步补什么
+
+### 30题LLM评测探索
+
+- 30题 LLM 评测知识问答
+- DeepSeek 85.7 vs Qwen 28.2
+- 发现三类失败模式：通用套话、知识缺失、知识不完整
+- 发现评测集术语歧义问题，通过加限定词修正
 
 ## 快速开始
 
@@ -15,23 +53,16 @@ pip install -r requirements.txt
 
 cp .env.example .env     # 编辑 .env 填入你的 API Key（本地开发用）
 # GitHub Actions CI 环境下，Key 通过 GitHub Secrets 注入
-python run.py --task rag-layered --model deepseek --dataset golden-set-8
 ```
-
-## 支持的任务
-
-| 任务 | 模型 | 说明 |
-|------|------|------|
-| `rag-layered` | deepseek | RAG 三层诊断 |
-| `judge-calibration` | deepseek | Judge 校准（Kappa + MAE） |
-| `agent-trajectory` | deepseek | Agent 轨迹五查 |
-| `prompt-injection` | deepseek | Prompt 注入防御 |
 
 ## 核心命令
 
 ```bash
+# RAG评测（19题，支持 --ids 筛选、--repeat 重复采样）
+python compare_models_rag.py --ids Q6,Q15a,Q15b,Q16,Q18 --repeat 3
+
 # RAG 分层诊断
-python run.py --task rag-layered --model deepseek --dataset golden-set-8
+python run.py --task rag-layered --model deepseek --dataset golden-set-18
 
 # Judge 校准
 python run.py --task judge-calibration --model deepseek --dataset judge-calibration-v1
@@ -43,6 +74,15 @@ python run.py --task agent-trajectory --model deepseek --dataset agent-tasks
 python run.py --task prompt-injection --model deepseek --dataset injection-cases
 ```
 
+## 支持的任务
+
+| 任务 | 模型 | 说明 |
+|------|------|------|
+| `rag-layered` | deepseek | RAG 三层诊断 |
+| `judge-calibration` | deepseek | Judge 校准（Kappa + MAE） |
+| `agent-trajectory` | deepseek | Agent 轨迹五查 |
+| `prompt-injection` | deepseek | Prompt 注入防御 |
+
 ## 对比两次运行
 
 ```bash
@@ -53,7 +93,7 @@ python run_diff.py --run-a results/<run_a> --run-b results/<run_b> --out diff.md
 
 ## 架构
 
-```
+```text
 config/   → 配置外置（models / datasets / tasks）
 core/     → 执行器 + 评测器 + 报告器 + 调度器 + 对比器
 tasks/    → 评测任务
@@ -79,28 +119,26 @@ run.py    → 统一入口
 - 换 Judge 只重判，换 generator 全重跑
 - 配置外置，代码不动
 - Harness = pytest 的 AI 评测版
+- 关键题跑 3 次，取均值 + 标准差
+- 修评分标准能区分“评测集问题”和“模型问题”
 
 ## 归档机制
 
 每次运行生成独立目录：
 
-```
+```text
 results/
-└── 20261008_104621_prompt-injection_deepseek_injection-cases/
-    ├── config_snapshot.json     # 本次配置快照
-    ├── raw_results.json          # 原始结果
-    ├── injection_summary.json    # 汇总
-    └── report.md                 # Markdown 报告
+└── 20261014_XXXXXX_rag-model-comparison_deepseek-vs-qwen_repeat3/
+    ├── config_snapshot.json
+    ├── rag_model_comparison.jsonl
+    └── rag_comparison_report.json
 ```
 
 任何时候能复现某次运行。
 
 ## CI 状态
 
-当前 CI 门禁阻断，因为 RAG 检索层失败数超过阈值（6 > 2）。
-
-这不是 bug，是门禁的价值——让质量问题在合并前暴露。
-后续优化检索器后，CI 会自动变绿。
+当前 CI 跑通，四类任务（RAG / Judge / Agent / Prompt 注入）均通过。
 
 ## 一键演示
 
