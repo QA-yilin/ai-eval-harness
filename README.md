@@ -4,7 +4,7 @@
 
 **📖 作品集导航**：[作品集](docs/portfolio.md) | [pytest 迁移](docs/pytest-migration.md) | [闭环](docs/closed-loop.md) | [改进记录](docs/improvement-log.md) | [调度平台架构](docs/platform-architecture.md) | [门禁标准](docs/quality-gate.md)
 
-**📊 六份评测报告**（2026-10）：
+**📊 七份评测报告**（2026-10）：
 
 - [01_AI评测体系方法论 V1.1](docs/reports/01_AI评测体系方法论_V1.1.pdf)
 - [02_RAG评测集优化报告 V1.0](docs/reports/02_RAG评测集优化报告_V1.0.pdf)
@@ -12,6 +12,7 @@
 - [04_评测指标计算报告 V1.0](docs/reports/04_评测指标计算报告_V1.0.pdf)
 - [05_LLM评测能力对比报告（30题）](docs/reports/05_LLM评测能力对比报告（30题）.pdf)
 - [06_Prompt注入测试报告 V1.0](docs/reports/06_Prompt注入测试报告_V1.0.pdf)
+- [07_Judge偏差检测报告 V1.0](docs/reports/07_Judge偏差检测报告_V1.0.pdf)
 
 统一 AI 评测框架，支持 RAG 分层诊断、Judge 校准、Agent 轨迹、Prompt 注入。
 
@@ -51,6 +52,13 @@
 - DeepSeek 30/30（100%） vs Qwen 28/30（93.3%）
 - Qwen漏掉2条：角色扮演、间接工具注入
 - LLM07（插件设计）是最薄弱环节
+
+### Judge偏差检测（10样本）
+
+- 平均绝对差值6分，轻微位置偏差
+- 7/10条无偏差，3/10条有偏差（10-30分）
+- Q15a DeepSeek偏差最大（-30分）
+- 建议：固定顺序 + 关键题多次评测
 
 ## 快速开始
 
