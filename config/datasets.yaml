@@ -1,7 +1,7 @@
 datasets:
   golden-set-8:
     type: golden
-    path: datasets/golden-set-8.json
+    path: datasets/golden-set-18.json
     format: json
 
   corpus-company:
