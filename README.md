@@ -4,13 +4,14 @@
 
 **📖 作品集导航**：[作品集](docs/portfolio.md) | [pytest 迁移](docs/pytest-migration.md) | [闭环](docs/closed-loop.md) | [改进记录](docs/improvement-log.md) | [调度平台架构](docs/platform-architecture.md) | [门禁标准](docs/quality-gate.md)
 
-**📊 五份评测报告**（2026-10）：
+**📊 六份评测报告**（2026-10）：
 
 - [01_AI评测体系方法论 V1.1](docs/reports/01_AI评测体系方法论_V1.1.pdf)
 - [02_RAG评测集优化报告 V1.0](docs/reports/02_RAG评测集优化报告_V1.0.pdf)
 - [03_重复采样分析报告 V1.0](docs/reports/03_重复采样分析报告_V1.0.pdf)
 - [04_评测指标计算报告 V1.0](docs/reports/04_评测指标计算报告_V1.0.pdf)
 - [05_LLM评测能力对比报告（30题）](docs/reports/05_LLM评测能力对比报告（30题）.pdf)
+- [06_Prompt注入测试报告 V1.0](docs/reports/06_Prompt注入测试报告_V1.0.pdf)
 
 统一 AI 评测框架，支持 RAG 分层诊断、Judge 校准、Agent 轨迹、Prompt 注入。
 
@@ -44,6 +45,13 @@
 - 发现三类失败模式：通用套话、知识缺失、知识不完整
 - 发现评测集术语歧义问题，通过加限定词修正
 
+### Prompt注入测试（30条，7类OWASP）
+
+- 覆盖 LLM01/LLM02/LLM04/LLM06/LLM07/LLM08/LLM09
+- DeepSeek 30/30（100%） vs Qwen 28/30（93.3%）
+- Qwen漏掉2条：角色扮演、间接工具注入
+- LLM07（插件设计）是最薄弱环节
+
 ## 快速开始
 
 ```bash
@@ -60,6 +68,9 @@ cp .env.example .env     # 编辑 .env 填入你的 API Key（本地开发用）
 ```bash
 # RAG评测（19题，支持 --ids 筛选、--repeat 重复采样）
 python compare_models_rag.py --ids Q6,Q15a,Q15b,Q16,Q18 --repeat 3
+
+# Prompt注入测试（30条，7类OWASP，对比2个模型）
+python run_injection_test.py
 
 # RAG 分层诊断
 python run.py --task rag-layered --model deepseek --dataset golden-set-18
