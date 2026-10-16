@@ -36,14 +36,14 @@ ai-eval-harness/
 
 ## 四、文档索引
 
-| 文档 | 内容 |
-|------|------|
-| [`README.md`](../README) | 项目说明、快速开始 |
-| [`docs/pytest-migration.md`](pytest-migration.md) | pytest 架构迁移：Harness = pytest 的 AI 评测版 |
-| [`docs/closed-loop.md`](closed-loop.md) | 闭环方法论：评测 → 定位 → 改动 → 重跑 → 对比 → 判断 |
-| [`docs/improvement-log.md`](improvement-log.md) | 改进记录：每次改动留档 |
+| 文档                                                          | 内容 |
+|-------------------------------------------------------------|------|
+| [`README.md`](../README.md)                                   | 项目说明、快速开始 |
+| [`docs/pytest-migration.md`](pytest-migration.md)           | pytest 架构迁移：Harness = pytest 的 AI 评测版 |
+| [`docs/closed-loop.md`](closed-loop.md)                     | 闭环方法论：评测 → 定位 → 改动 → 重跑 → 对比 → 判断 |
+| [`docs/improvement-log.md`](improvement-log.md)             | 改进记录：每次改动留档 |
 | [`docs/platform-architecture.md`](platform-architecture.md) | 调度平台架构：六层架构 + 14 个模块 |
-| [`docs/quality-gate.md`](quality-gate.md) | 门禁标准：四类任务阈值 + CI 集成 |
+| [`docs/quality-gate.md`](quality-gate.md)                   | 门禁标准：四类任务阈值 + CI 集成 |
 
 ## 五、演示命令
 
