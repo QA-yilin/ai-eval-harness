@@ -91,11 +91,11 @@
 
 ### 2.6 数据层
 
-| pytest | Harness |
-|--------|---------|
-| testdata/login.json | datasets/golden-set-8.json |
-| @pytest.fixture(params=...) | for item in golden: |
-| csv/xlsx 数据驱动 | jsonl 结果驱动 |
+| pytest | Harness                     |
+|--------|-----------------------------|
+| testdata/login.json | datasets/golden-set-19.json |
+| @pytest.fixture(params=...) | for item in golden:         |
+| csv/xlsx 数据驱动 | jsonl 结果驱动                  |
 
 **核心相同**：数据驱动。
 

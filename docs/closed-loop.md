@@ -47,7 +47,7 @@ python run_diff.py --run-a results/<run_a> --run-b results/<run_b> --out diff.md
 
 相关 run（示例）：
 
-- 20261008_121853_rag-layered_deepseek_golden-set-8
+- 20261008_121853_rag-layered_deepseek_golden-set-19
 - 20261008_121905_judge-calibration_deepseek_judge-calibration-v1
 - 20261008_121905_agent-trajectory_deepseek_agent-tasks
 - 20261008_121910_prompt-injection_deepseek_injection-cases

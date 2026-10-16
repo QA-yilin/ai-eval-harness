@@ -81,7 +81,7 @@ python check_gate.py
 
 ```
 [rag-layered]
-  run: 20261008_121853_rag-layered_deepseek_golden-set-8
+  run: 20261008_121853_rag-layered_deepseek_golden-set-19
     ❌ first_failing.retrieval_layer: 6 <= 2
     ✅ first_failing.generation_layer: 0 <= 1
 [judge-calibration]

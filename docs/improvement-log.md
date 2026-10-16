@@ -26,7 +26,7 @@
 Harness 化完成，四类任务全部跑通。
 
 ### 相关 run 目录
-- `results/20261008_121853_rag-layered_deepseek_golden-set-8`
+- `results/20261008_121853_rag-layered_deepseek_golden-set-19`
 - `results/20261008_121905_judge-calibration_deepseek_judge-calibration-v1`
 - `results/20261008_121905_agent-trajectory_deepseek_agent-tasks`
 - `results/20261008_121910_prompt-injection_deepseek_injection-cases`

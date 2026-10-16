@@ -55,7 +55,7 @@ pip install -r requirements.txt
 cp .env.example .env     # 编辑 .env 填入你的 API Key
 
 # 2. 跑四类任务
-python run.py --task rag-layered --model deepseek --dataset golden-set-8
+python run.py --task rag-layered --model deepseek --dataset golden-set-19
 python run.py --task judge-calibration --model deepseek --dataset judge-calibration-v1
 python run.py --task agent-trajectory --model deepseek --dataset agent-tasks
 python run.py --task prompt-injection --model deepseek --dataset injection-cases

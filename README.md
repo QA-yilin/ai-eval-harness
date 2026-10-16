@@ -81,7 +81,7 @@ python compare_models_rag.py --ids Q6,Q15a,Q15b,Q16,Q18 --repeat 3
 python run_injection_test.py
 
 # RAG 分层诊断
-python run.py --task rag-layered --model deepseek --dataset golden-set-18
+python run.py --task rag-layered --model deepseek --dataset golden-set-19
 
 # Judge 校准
 python run.py --task judge-calibration --model deepseek --dataset judge-calibration-v1

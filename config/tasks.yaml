@@ -2,7 +2,7 @@ tasks:
   rag-layered:
     description: RAG 三层链路 + 分层诊断
     pipeline: rag_pipeline
-    dataset: golden-set-8
+    dataset: golden-set-19
     corpus: corpus-company
     evaluators: [retrieval, understanding, generation]
     output_prefix: rag-layered
