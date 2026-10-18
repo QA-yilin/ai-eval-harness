@@ -6,13 +6,13 @@
 
 **📊 七份评测报告**（2026-10）：
 
-- [01_AI评测体系方法论 V1.1](docs/reports/01_AI评测体系方法论_V1.1.pdf)
-- [02_RAG评测集优化报告 V1.0](docs/reports/02_RAG评测集优化报告_V1.0.pdf)
-- [03_重复采样分析报告 V1.0](docs/reports/03_重复采样分析报告_V1.0.pdf)
-- [04_评测指标计算报告 V1.0](docs/reports/04_评测指标计算报告_V1.0.pdf)
-- [05_LLM评测能力对比报告（30题）](docs/reports/05_LLM评测能力对比报告（30题）.pdf)
-- [06_Prompt注入测试报告 V1.0](docs/reports/06_Prompt注入测试报告_V1.0.pdf)
-- [07_Judge偏差检测报告 V1.0](docs/reports/07_Judge偏差检测报告_V1.0.pdf)
+- [01_AI评测体系方法论](docs/reports/01_AI评测体系方法论_V1.2.pdf)
+- [02_RAG评测集优化报告](docs/reports/02_RAG评测集优化报告_V1.1.pdf)
+- [03_重复采样分析报告](docs/reports/03_重复采样分析报告_V1.1.pdf)
+- [04_评测指标计算报告](docs/reports/04_评测指标计算报告_V1.1.pdf)
+- [05_LLM评测能力对比报告（30题）](docs/reports/05_LLM评测能力对比报告（30题）_V1.1.pdf)
+- [06_Prompt注入测试报告](docs/reports/06_Prompt注入测试报告_V1.1.pdf)
+- [07_Judge偏差检测报告](docs/reports/07_Judge偏差检测报告_V1.1.pdf)
 
 统一 AI 评测框架，支持 RAG 分层诊断、Judge 校准、Agent 轨迹、Prompt 注入。
 
