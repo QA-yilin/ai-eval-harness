@@ -5,6 +5,8 @@
 **📖 作品集导航**：[作品集](docs/portfolio.md) | [pytest 迁移](docs/pytest-migration.md) | [闭环](docs/closed-loop.md) | [改进记录](docs/improvement-log.md) | [调度平台架构](docs/platform-architecture.md) | [门禁标准](docs/quality-gate.md)
 
 **📊 七份评测报告**（2026-10）：
+📌 阅读提示：报告包含大量数据表格，如 GitHub 网页端无法直接预览，请点击对应文件后，点击右上角 "Download raw file" 下载本地查看。
+(如需 PDF 原文件或更多项目演示，欢迎随时沟通，我可通过邮箱或微信直接发送。)
 
 - [01_AI评测体系方法论](docs/reports/01_AI评测体系方法论_V1.2.pdf)
 - [02_RAG评测集优化报告](docs/reports/02_RAG评测集优化报告_V1.1.pdf)
