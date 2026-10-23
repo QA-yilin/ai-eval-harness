@@ -15,7 +15,7 @@ DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
 DEEPSEEK_URL = "https://api.deepseek.com/v1/chat/completions"
 OLLAMA_URL = "http://localhost:11434/api/generate"
 QWEN_MODEL = "qwen2.5:14b"
-GOLDEN_SET_PATH = "datasets/golden-set-18.json"
+GOLDEN_SET_PATH = "datasets/golden-set-19.json"
 CORPUS_PATH = "datasets/corpus.json"
 
 JUDGE_PROMPT_NORMAL = """你是一个严格的评测专家。请根据以下标准给模型回答打分。
