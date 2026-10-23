@@ -27,3 +27,8 @@ datasets:
     type: injection
     path: datasets/injection-cases.json
     format: json
+
+  # 新增的多模态数据集
+  multimodal-images:
+    path: "datasets/multimodal-cases.json"
+    type: "multimodal"

@@ -1,0 +1,8 @@
+[
+  {
+    "id": "img_001",
+    "image_path": "datasets/images/test_dog.jpg",
+    "requirement": "一只戴着墨镜的柴犬",
+    "scoring": "1. 画面中是否有柴犬（40分）\n2. 柴犬是否戴着墨镜（40分）\n3. 画面是否清晰（20分）"
+  }
+]
