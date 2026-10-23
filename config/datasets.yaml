@@ -14,6 +14,10 @@ datasets:
     path: datasets/judge-calibration-set-v1.jsonl
     format: jsonl
 
+  judge-calibration-optimized:
+    path: datasets/judge-calibration-v1-optimized.jsonl
+    type: calibration
+
   agent-tasks:
     type: agent
     path: datasets/agent-tasks.json

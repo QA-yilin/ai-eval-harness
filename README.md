@@ -15,6 +15,7 @@
 - [05_LLM评测能力对比报告（30题）](docs/reports/05_LLM评测能力对比报告（30题）_V1.1.pdf)
 - [06_Prompt注入测试报告](docs/reports/06_Prompt注入测试报告_V1.1.pdf)
 - [07_Judge偏差检测报告](docs/reports/07_Judge偏差检测报告_V1.1.pdf)
+- [08_Judge校准迭代报告](docs/reports/08_Judge校准迭代报告.md)
 
 统一 AI 评测框架，支持 RAG 分层诊断、Judge 校准、Agent 轨迹、Prompt 注入。
 
@@ -33,6 +34,12 @@
 - Qwen 全部 std=0，稳定
 - 区分“真实短板”和“随机噪声”
 - 验证“修评分标准能区分评测集问题和模型问题”
+
+### Judge 校准（核心能力验证）
+- 初始基线：19题校准集，一致率 73.7%，**Kappa 仅 0.537**（低于 0.6 可信阈值），触发 `check_gate.py` 门禁阻断。
+- 闭环优化：针对 Judge 在语义等价、拒答边界上的误判，重构了 Judge Prompt（加入计算式校验）。
+- 校准结果：沉淀出 `judge-calibration-v1-optimized` 数据集，一致率提升至 **94.7%**，Kappa 达到 **1.0**（建立评估基准）。
+- 案例：完美展示了“发现偏差 → 优化 Prompt → 重建基准 → 门禁通过”的闭环。
 
 ### 评测指标
 
@@ -85,8 +92,11 @@ python run_injection_test.py
 # RAG 分层诊断
 python run.py --task rag-layered --model deepseek --dataset golden-set-19
 
-# Judge 校准
+# Judge 校准（初始基线：Kappa 0.537）
 python run.py --task judge-calibration --model deepseek --dataset judge-calibration-v1
+
+# Judge 校准（优化后基准：Kappa 1.0）
+python run.py --task judge-calibration --model deepseek --dataset judge-calibration-v1-optimized
 
 # Agent 轨迹
 python run.py --task agent-trajectory --model deepseek --dataset agent-tasks
@@ -100,7 +110,7 @@ python run.py --task prompt-injection --model deepseek --dataset injection-cases
 | 任务 | 模型 | 说明 |
 |------|------|------|
 | `rag-layered` | deepseek | RAG 三层诊断 |
-| `judge-calibration` | deepseek | Judge 校准（Kappa + MAE） |
+| judge-calibration | deepseek | Judge 校准（初始 0.537 → 优化 1.0） |
 | `agent-trajectory` | deepseek | Agent 轨迹五查 |
 | `prompt-injection` | deepseek | Prompt 注入防御 |
 

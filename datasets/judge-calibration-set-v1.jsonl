@@ -6,3 +6,14 @@
 {"case_id": "cal_Q6", "id": "Q6", "question": "连续5天没有标记会怎么处理？", "judge_score": 0, "human_score": 0, "human_reason": "拒答错误"}
 {"case_id": "cal_Q7", "id": "Q7", "question": "公司是否允许员工带宠物上班？", "judge_score": 0, "human_score": 100, "human_reason": "正确拒答"}
 {"case_id": "cal_Q8", "id": "Q8", "question": "断网导致延误，公司是否免责？", "judge_score": 0, "human_score": 0, "human_reason": "拒答错误"}
+{"case_id": "cal_Q9", "id": "Q9", "question": "员工在远程办公期间，如果因家里设备故障导致工作延误，同时又连续3天未在OA系统标记，会同时触发哪些处理？", "judge_score": 90, "human_score": 90, "human_reason": "命中免责与旷工，缺失叠加说明"}
+{"case_id": "cal_Q10", "id": "Q10", "question": "如果员工因疫情申请远程办公15天，是否违反'每月不超过8天'的规定？", "judge_score": 100, "human_score": 100, "human_reason": "准确判断不可抗力"}
+{"case_id": "cal_Q11", "id": "Q11", "question": "远程办公期间，公司是否提供设备，并承担设备维修费用？", "judge_score": 80, "human_score": 80, "human_reason": "说明不提供设备，但对维修费未明确"}
+{"case_id": "cal_Q12", "id": "Q12", "question": "远程办公期间，如果员工未提交工作日报，且连续3天未在OA系统标记，会叠加哪些处理？", "judge_score": 60, "human_score": 80, "human_reason": "Judge未识别出叠加说明的加分项"}
+{"case_id": "cal_Q13", "id": "Q13", "question": "公司是否提供员工子女教育补贴？", "judge_score": 100, "human_score": 100, "human_reason": "正确拒答"}
+{"case_id": "cal_Q14", "id": "Q14", "question": "远程办公期间，公司是否提供交通补贴？", "judge_score": 100, "human_score": 100, "human_reason": "正确拒答"}
+{"case_id": "cal_Q15a", "id": "Q15a", "question": "doc_002说每月不超过8天，doc_006说不可抗力不受限制。如果员工因暴雨申请10天，是否违反'每月不超过8天'的规定？", "judge_score": 100, "human_score": 100, "human_reason": "准确识别不可抗力"}
+{"case_id": "cal_Q15b", "id": "Q15b", "question": "doc_006说不可抗力不受限制，但临时政策由人力资源部另行通知。如果人力资源部尚未发布通知，员工因暴雨申请10天，是否违规？", "judge_score": 0, "human_score": 100, "human_reason": "未识别程序条件，Judge误判"}
+{"case_id": "cal_Q16", "id": "Q16", "question": "员工连续3天未标记，且当月已违规2次，会触发什么处理？", "judge_score": 100, "human_score": 100, "human_reason": "准确识别违规次数叠加"}
+{"case_id": "cal_Q17", "id": "Q17", "question": "远程办公期间，员工是否可以在家带孩子？", "judge_score": 100, "human_score": 100, "human_reason": "正确指出文档未规定"}
+{"case_id": "cal_Q18", "id": "Q18", "question": "远程办公期间，公司是否提供办公桌椅？", "judge_score": 0, "human_score": 100, "human_reason": "Judge直接断言不提供，未识别边界，产生幻觉"}
