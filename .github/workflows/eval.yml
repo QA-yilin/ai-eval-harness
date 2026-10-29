@@ -28,7 +28,7 @@ jobs:
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
 
       - name: Run Judge calibration
-        run: python run.py --task judge-calibration --model deepseek --dataset judge-calibration-v1
+        run: python run.py --task judge-calibration --model deepseek --dataset judge-calibration-v1-optimized
         env:
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
 
