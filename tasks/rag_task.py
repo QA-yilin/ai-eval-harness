@@ -1,7 +1,7 @@
 import json
 import re
+import math
 from collections import Counter
-
 
 RAG_PROMPT = """基于以下上下文回答问题，不要编造上下文之外的信息。
 如果上下文中没有答案，请回答"上下文中未找到相关信息"。
@@ -18,15 +18,52 @@ def load_json(path):
         return json.load(f)
 
 
-def simple_retriever(query, corpus, k=5):
-    scored = []
-    for c in corpus:
-        keywords = [w for w in query if len(w) > 1]
-        score = sum(1 for kw in keywords if kw in c["text"])
-        scored.append({**c, "score": score})
-    scored.sort(key=lambda x: x["score"], reverse=True)
-    return scored[:k]
+def get_ngrams(text, n=2):
+    """提取字符级 n-gram（中文极快且效果不错的替代方案）"""
+    text = re.sub(r'\s+', '', text)
+    return [text[i:i + n] for i in range(len(text) - n + 1)] + list(text)
 
+
+def calculate_tf_idf(query, docs):
+    """纯 Python 实现轻量级 TF-IDF 向量检索"""
+    query_grams = get_ngrams(query)
+    doc_grams = [get_ngrams(d["text"]) for d in docs]
+
+    # 计算 IDF
+    N = len(docs)
+    df = Counter()
+    for grams in doc_grams:
+        for gram in set(grams):
+            df[gram] += 1
+    idf = {gram: math.log(N / (1 + df[gram])) for gram in df}
+
+    # 计算查询向量
+    query_vec = Counter(query_grams)
+    for gram in query_vec:
+        query_vec[gram] *= idf.get(gram, 0)
+
+    scored_docs = []
+    for i, doc in enumerate(docs):
+        doc_vec = Counter(doc_grams[i])
+        for gram in doc_vec:
+            doc_vec[gram] *= idf.get(gram, 0)
+
+        # 余弦相似度
+        intersection = set(query_vec.keys()) & set(doc_vec.keys())
+        numerator = sum([query_vec[x] * doc_vec[x] for x in intersection])
+        sum1 = sum([query_vec[x] ** 2 for x in query_vec.keys()])
+        sum2 = sum([doc_vec[x] ** 2 for x in doc_vec.keys()])
+        denominator = math.sqrt(sum1) * math.sqrt(sum2)
+
+        cosine = numerator / denominator if denominator else 0.0
+        scored_docs.append({**doc, "score": cosine})
+
+    scored_docs.sort(key=lambda x: x["score"], reverse=True)
+    return scored_docs
+
+def simple_retriever(query, corpus, k=5):
+    """使用 TF-IDF 向量检索替代简单的字符串包含"""
+    return calculate_tf_idf(query, corpus)[:k]
 
 def split_claims(answer):
     if not answer:

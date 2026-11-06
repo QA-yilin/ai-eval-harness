@@ -38,6 +38,7 @@ def load_run_metrics(run_dir, task_name):
             metrics["first_failing.understanding_layer"] = dist.get("understanding_layer", 0)
             metrics["first_failing.generation_layer"] = dist.get("generation_layer", 0)
 
+
     elif task_name == "judge-calibration":
         path = os.path.join(run_dir, "kappa_report.json")
         if os.path.exists(path):
@@ -45,6 +46,7 @@ def load_run_metrics(run_dir, task_name):
             metrics["cohen_kappa"] = data.get("cohen_kappa", 0)
             metrics["mae"] = data.get("mae", 0)
             metrics["raw_agreement"] = data.get("raw_agreement", 0)
+            metrics["evidence_coverage"] = data.get("evidence_coverage", 0)
 
     elif task_name == "agent-trajectory":
         path = os.path.join(run_dir, "agent_report.json")

@@ -9,7 +9,7 @@ tasks:
 
   judge-calibration:
     description: Judge 校准
-    dataset: judge-calibration-v1
+    dataset: judge-calibration-golden
     judge: deepseek
     evaluators: [kappa]
     output_prefix: judge-calibration
@@ -27,3 +27,4 @@ tasks:
   #  model: qwen14b
     evaluators: [ injection_defense ]
     output_prefix: prompt-injection
+

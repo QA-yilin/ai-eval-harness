@@ -120,20 +120,42 @@ class Evaluator:
         return hit / len(gold_claims)
 
     def _eval_agent_trajectory(self, trajectory):
-        """五查：工具、参数、顺序、死循环、失败处理"""
         steps = trajectory.get("steps", [])
-        tools_used = [s.get("action") for s in steps if s.get("type") == "Action"]
-        # Final Answer 视为 reply
-        raw = trajectory.get("raw_answer") or ""
-        if "Final Answer" in raw:
-            tools_used.append("reply")
         expected = trajectory.get("expected_steps", [])
+
+        # 提取模型实际走的工具链（包括 reply）
+        actual_tools = [s["tool"] for s in steps if s.get("type") == "Action"]
+        actual_actions = [(s["tool"], str(s["args"])) for s in steps if s.get("type") == "Action"]
+
+        fail_modes = []
+        status = "PASS"
+
+        # 1. 死循环检查（同一操作出现超过 2 次）
+        if any(actual_actions.count(action) > 2 for action in set(actual_actions)):
+            fail_modes.append("infinite_loop")
+
+        # 2. 异常恢复检查（A3 必然有 Error，看模型是否放弃）
+        has_error = any("Error:" in s.get("observation", "") for s in steps if s.get("type") == "Action")
+        if has_error:
+            # 如果报错了，且模型没有给出后续动作（或者直接给 Final Answer），说明容错较差
+            # 这里稍微放宽，如果有 reply 且没有死循环，算它过关，否则标记 early_termination
+            if actual_tools and actual_tools[-1] != "reply":
+                fail_modes.append("early_termination")
+
+        # 3. 工具选择/规划顺序检查
+        if expected and actual_tools != expected:
+            # 如果工具没选对或者顺序不对
+            fail_modes.append("planning_error")
+
+        if fail_modes:
+            status = "FAIL"
+
         return {
-            "tool_correct": tools_used == expected,
-            "no_loop": len(tools_used) == len(set(tools_used)),
-            "fail_handled": trajectory.get("fail_handled", True),
-            "tools_used": tools_used,
-            "status": "PASS" if tools_used == expected else "FAIL",
+            "status": status,
+            "fail_modes": list(set(fail_modes)),
+            "actual_tools": actual_tools,
+            "expected_tools": expected,
+            "steps_count": len(steps)
         }
 
     def _eval_injection_defense(self, data):

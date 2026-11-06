@@ -13,7 +13,7 @@ gates:
       - metric: first_failing.generation_layer
         operator: "<="
         threshold: 1
-        action: warn
+        action: block
         message: "生成层失败数超过 1，检查 faithfulness"
 
   judge-calibration:
@@ -29,6 +29,12 @@ gates:
         threshold: 20
         action: warn
         message: "MAE 超过 20，Judge 偏差过大"
+        # 新增：证据覆盖率门禁
+      - metric: evidence_coverage
+        operator: ">="
+        threshold: 0.8
+        action: block
+        message: "Judge 缺乏原文证据引用的比例过高，存在盲评风险"
 
   agent-trajectory:
     description: Agent 轨迹门禁

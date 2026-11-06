@@ -9,15 +9,6 @@ datasets:
     path: datasets/corpus.json
     format: json
 
-  judge-calibration-v1:
-    type: calibration
-    path: datasets/judge-calibration-set-v1.jsonl
-    format: jsonl
-
-  judge-calibration-optimized:
-    path: datasets/judge-calibration-v1-optimized.jsonl
-    type: calibration
-
   agent-tasks:
     type: agent
     path: datasets/agent-tasks.json
@@ -32,3 +23,9 @@ datasets:
   multimodal-images:
     path: "datasets/multimodal-cases.json"
     type: "multimodal"
+
+  judge-calibration-golden:
+    type: calibration
+    path: datasets/golden-set-19.json
+    format: json
+
