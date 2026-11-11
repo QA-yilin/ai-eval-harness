@@ -1,0 +1,7 @@
+{
+  "model_name": "deepseek-chat",
+  "temperature": 0.0,
+  "probe_prompt": "请只回答数字：1 + 1 等于几？",
+  "expected_answer": "2",
+  "hash": "c81e728d9d4c2f636f067f89cc14862c"
+}

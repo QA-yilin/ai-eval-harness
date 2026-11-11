@@ -1,6 +1,7 @@
 # tasks/agent_task.py
 import json
 import re
+import time
 from core.tools import ToolRegistry
 
 
@@ -45,16 +46,20 @@ def run_simple_agent(task_item, executor, max_turns=5):
     ]
 
     steps = []
+    turn_durations = {}
 
     for turn in range(max_turns):
+        turn_start = time.perf_counter()
         response = executor.call_model(messages)
         if not response:
+            turn_durations[turn] = time.perf_counter() - turn_start
             break
 
         if "Final Answer:" in response:
             final_answer = response.split("Final Answer:")[-1].strip()
             # 关键修改：把 Final Answer 映射为 reply，以对齐 expected_steps
             steps.append({"type": "Action", "tool": "reply", "args": {"content": final_answer}, "observation": "END"})
+            turn_durations[turn] = time.perf_counter() - turn_start
             break
 
         tool_name, tool_args = parse_action(response)
@@ -63,6 +68,7 @@ def run_simple_agent(task_item, executor, max_turns=5):
             messages.append(
                 {"role": "user", "content": "Observation: 格式错误。必须使用 Action: tool_name({args}) 的格式。"})
             steps.append({"type": "FormatError", "raw": response})
+            turn_durations[turn] = time.perf_counter() - turn_start
             continue
 
         observation = ToolRegistry.execute(tool_name, tool_args)
@@ -76,12 +82,14 @@ def run_simple_agent(task_item, executor, max_turns=5):
 
         messages.append({"role": "assistant", "content": response})
         messages.append({"role": "user", "content": f"Observation: {observation}"})
+        turn_durations[turn] = time.perf_counter() - turn_start
 
     return {
         "id": task_item["id"],
         "steps": steps,
         "expected_steps": task_item.get("expected_steps", []),
-        "raw_answer": response if 'response' in locals() else ""
+        "raw_answer": response if 'response' in locals() else "",
+        "turn_durations": turn_durations
     }
 
 

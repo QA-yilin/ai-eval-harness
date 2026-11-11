@@ -123,28 +123,31 @@ class Evaluator:
         steps = trajectory.get("steps", [])
         expected = trajectory.get("expected_steps", [])
 
-        # 提取模型实际走的工具链（包括 reply）
         actual_tools = [s["tool"] for s in steps if s.get("type") == "Action"]
         actual_actions = [(s["tool"], str(s["args"])) for s in steps if s.get("type") == "Action"]
 
         fail_modes = []
         status = "PASS"
 
-        # 1. 死循环检查（同一操作出现超过 2 次）
+        # 1. 精确死循环检查（同一操作出现超过 2 次）
         if any(actual_actions.count(action) > 2 for action in set(actual_actions)):
             fail_modes.append("infinite_loop")
 
-        # 2. 异常恢复检查（A3 必然有 Error，看模型是否放弃）
+        # 2. 发散性死循环检查（同一个工具被连续调用超过 3 次，哪怕参数不同）
+        from collections import Counter
+        tool_counts = Counter(actual_tools)
+        if any(count > 3 for tool_name, count in tool_counts.items() if tool_name != "reply"):
+            if "infinite_loop" not in fail_modes:
+                fail_modes.append("infinite_loop")
+
+        # 3. 异常恢复检查
         has_error = any("Error:" in s.get("observation", "") for s in steps if s.get("type") == "Action")
         if has_error:
-            # 如果报错了，且模型没有给出后续动作（或者直接给 Final Answer），说明容错较差
-            # 这里稍微放宽，如果有 reply 且没有死循环，算它过关，否则标记 early_termination
             if actual_tools and actual_tools[-1] != "reply":
                 fail_modes.append("early_termination")
 
-        # 3. 工具选择/规划顺序检查
+        # 4. 工具选择/规划顺序检查
         if expected and actual_tools != expected:
-            # 如果工具没选对或者顺序不对
             fail_modes.append("planning_error")
 
         if fail_modes:

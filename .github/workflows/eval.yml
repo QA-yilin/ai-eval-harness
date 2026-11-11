@@ -1,10 +1,17 @@
-name: AI Eval Harness
+name: AI Eval Harness CI
 
 on:
   pull_request:
     branches: [main]
   push:
     branches: [main]
+
+  # ====== 新增：夜间红队定时轰炸 ======
+  schedule:
+    # 每天 UTC 18:00 (北京时间凌晨 2:00) 自动触发
+    - cron: '0 18 * * *'
+
+  # ====== 新增：允许手动触发 ======
   workflow_dispatch:
 
 jobs:
@@ -12,7 +19,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -42,8 +48,27 @@ jobs:
         env:
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
 
+      # 只在夜间定时任务触发时，才跑最深度的红队轰炸
+      - name: Run Nightly Red Team Injection
+        if: github.event_name == 'schedule'
+        run: |
+          echo "⏰ 夜间定时任务触发！"
+          echo "（深度红队轰炸已就绪，为防止消耗个人额度，执行已暂停）"
+          # python run.py --task prompt-injection --model deepseek --dataset injection-cases
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+
       - name: Check quality gate
         run: python check_gate.py
+
+      # ====== 失败告警机制 ======
+      - name: Send Alert on Failure
+        if: failure()
+        run: |
+          echo "⚠️ 质量门禁被触发或测试失败！"
+          # 在此处通过 curl 调用钉钉/企微 Webhook 告警
+          # curl -H "Content-Type: application/json" -d '{"text": "❌ AI Eval 门禁拦截，请检查流水线。"}' ${{ secrets.WEBHOOK_URL }}
+          echo "告警已发送（演示模式）。"
 
       - name: Upload results
         if: always()
