@@ -28,12 +28,12 @@
 ## 🚀 最新架构演进（V2.0 核心亮点）
 *(注：V2.0 重点针对 Agent 真实沙箱、Judge 防作弊机制与 RAG 语义检索进行了深度重构)*
 
-- **真 Agent 沙箱**：废弃单纯的 Prompt 文本解析，在 `core/tools.py` 中实现原生工具执行引擎。跑通 `Thought -> Action -> Observation` 多轮闭环，落地 5 大失败归因（规划错误、工具选错、参数错误、死循环、过早终止）。
-- **防作弊 Judge**：强制 Judge 在打分时输出 `evidence` 字段引用原文。若无证据自动判 0，并在门禁中加入 `evidence_coverage` 硬性阻断。
-- **RAG 语义检索**：用 Python 编写 TF-IDF 向量空间模型，替代字面匹配，检索层首错失败数从 10+ 骤降至 2。
-- **流式 TTFT 压测**：新增 Stream 流式请求脚本，精确计算首字延迟（P95=774ms），保障大模型专属 SLA。
+- **真 Agent 沙箱与 Trace 归因**：废弃单纯的 Prompt 文本解析，在 `core/tools.py` 中实现原生工具执行引擎。跑通 `Thought -> Action -> Observation` 多轮闭环，落地 5 大失败归因（规划错误、工具选错、参数错误、死循环、过早终止）。
+- **企业级安全合规拦截（AOP）**：底层 `Executor` 引入拦截器模式（切面编程）。支持输入越狱意图拦截与**真实流式（Stream）输出截断**，命中敏感词毫秒级熔断 TCP 连接，并配有 `test_executor_security.py` 自动化验证脚本。
+- **防作弊 Judge 校准**：强制 Judge 在打分时输出 `evidence` 字段引用原文。若无证据自动判 0，并在门禁中加入 `evidence_coverage` 硬性阻断。
+- **RAG 语义检索升级**：用 Python 编写 TF-IDF 向量空间模型，替代字面匹配，检索层首错失败数从 10+ 骤降至 2。
+- **流式 TTFT 压测**：新增 Stream 流式请求脚本（`performance_test.py`），精确计算首字延迟（P95=774ms），保障大模型专属 SLA。
 - **模型漂移检测（防作弊）**：新增 `check_model_drift.py` 指纹断言工具。通过低温（Temperature=0）探针请求生成文本 MD5 哈希，与基线快照比对。若开发偷换底座模型或篡改参数，哈希突变将直接触发告警，保障评测结果真实有效。
-- **企业级流式合规拦截**：基于 AOP 切面编程思想，在底层 `Executor` 中内置拦截器链。支持同步清洗与真实流式（Stream）打字机级别的敏感词扫描，命中违规词毫秒级熔断 TCP 连接，确保 AI 应用绝对合规。
 
 ---
 
