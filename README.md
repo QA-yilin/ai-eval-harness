@@ -1,6 +1,19 @@
 # AI Eval Harness
 
+
 > 四类 AI 评测任务 + 对比 + 回归 + 门禁 + 闭环 + 调度平台设计
+
+> **V2.0 重大升级：上线 Streamlit 可视化效能大屏，引入 AI Code Review 与真实 Agent 沙箱**
+
+## 📸 平台大屏演示
+
+| 📊 质量看板 (RAG分层诊断) | 🤖 Agent 轨迹回放 (死循环高亮) |
+| :---: | :---: |
+| ![RAG](images/rag-dashboard.png) | ![Agent](images/agent-trace.png) |
+
+### 🔍 AI 代码变更审查与安全门禁 (AI Code Review)
+**自动识别漏洞、强制引用代码行号作为证据，并阻断发布流程！**
+![Code Review](images/ai-code-review.png)
 
 **📖 作品集导航**：[作品集](docs/portfolio.md) | [pytest 迁移](docs/pytest-migration.md) | [闭环](docs/closed-loop.md) | [改进记录](docs/improvement-log.md) | [调度平台架构](docs/platform-architecture.md) | [门禁标准](docs/quality-gate.md)
 
