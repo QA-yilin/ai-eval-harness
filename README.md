@@ -12,6 +12,8 @@
 | ![RAG](images/rag-dashboard.png) | ![Agent](images/agent-trace.png) |
 
 ### 🔍 AI 代码变更审查与安全门禁 (AI Code Review)
+(支持实时动态粘贴代码，AI 强制引用行号证据并触发发布阻断)
+
 **自动识别漏洞、强制引用代码行号作为证据，并阻断发布流程！**
 ![Code Review](images/ai-code-review.png)
 

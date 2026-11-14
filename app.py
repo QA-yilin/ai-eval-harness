@@ -6,6 +6,7 @@ import plotly.express as px
 import pandas as pd
 from core.executor import Executor
 from dotenv import load_dotenv
+
 load_dotenv()
 
 # ================= 页面基础配置 =================
@@ -13,8 +14,8 @@ st.set_page_config(page_title="AI 工程效能与质量门禁平台", page_icon=
 st.title("🛡️ AI 工程效能与质量门禁平台 (Harness V2.0)")
 st.markdown("---")
 
-# ================= 依赖注入：初始化底层执行引擎Executor =================
-# 使用单例缓存防止 Streamlit 热更新导致重复实例化，消耗 API 额度
+
+# ================= 初始化 Executor =================
 @st.cache_resource
 def get_executor():
     try:
@@ -22,11 +23,27 @@ def get_executor():
             cfg = yaml.safe_load(f)["models"]["deepseek"]
         return Executor(cfg)
     except Exception as e:
-        st.error(f"加载模型配置失败: {e}")
         return None
 
 
 executor = get_executor()
+
+
+# ================= 辅助函数：读取最新结果 =================
+def get_latest_run_dir(prefix):
+    """去 results 目录下找带有特定前缀的最新文件夹"""
+    results_dir = "results"
+    if not os.path.exists(results_dir):
+        return None
+
+    # 找出所有符合前缀的文件夹
+    dirs = [d for d in os.listdir(results_dir) if d.startswith(prefix) or prefix in d]
+    if not dirs:
+        return None
+    # 按名字排序（因为名字里有时间戳），取最新的
+    dirs.sort(reverse=True)
+    return os.path.join(results_dir, dirs[0])
+
 
 # ================= 页面 Tab 划分 =================
 tab1, tab2, tab3 = st.tabs(["📊 质量看板 (RAG诊断)", "🤖 Agent 轨迹回放", "🔍 AI 代码变更审查"])
@@ -34,58 +51,80 @@ tab1, tab2, tab3 = st.tabs(["📊 质量看板 (RAG诊断)", "🤖 Agent 轨迹�
 # ================= Tab 1: 质量看板 =================
 with tab1:
     st.subheader("RAG 分层诊断首错归因")
-    st.markdown("读取 `results` 目录下最新跑批的 `layer_summary.json`，直观展现检索层、理解层、生成层的失败分布。")
 
-    # 这里为了方便演示，如果没读到本地文件，就用 Mock 数据
-    # 你的真实环境中可以改成: with open("results/xxx/layer_summary.json") as f: ...
-    mock_dist = {"none": 9, "retrieval_layer": 2, "understanding_layer": 2, "generation_layer": 6}
+    # 找最新的 rag-layered 结果目录
+    rag_dir = get_latest_run_dir("rag-layered")
+    if rag_dir:
+        st.success(f"已加载真实跑批数据：`{rag_dir}`")
+        layer_json_path = os.path.join(rag_dir, "layer_summary.json")
 
-    df_dist = pd.DataFrame(list(mock_dist.items()), columns=["失败层级", "数量"])
+        if os.path.exists(layer_json_path):
+            with open(layer_json_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
 
-    # 画柱状图
-    fig = px.bar(df_dist, x="失败层级", y="数量", color="失败层级",
-                 title="First Failing Layer 分布",
-                 color_discrete_sequence=px.colors.qualitative.Pastel)
-    st.plotly_chart(fig, use_container_width=True)
+            dist = data.get("first_failing_distribution", {})
+            if dist:
+                df_dist = pd.DataFrame(list(dist.items()), columns=["失败层级", "数量"])
+                fig = px.bar(df_dist, x="失败层级", y="数量", color="失败层级",
+                             title="First Failing Layer 分布",
+                             color_discrete_sequence=px.colors.qualitative.Pastel)
+                st.plotly_chart(fig, use_container_width=True)
+            else:
+                st.warning("layer_summary.json 中未找到 first_failing_distribution 数据。")
+        else:
+            st.error(f"在 {rag_dir} 中未找到 layer_summary.json")
+    else:
+        st.warning("未在 results 目录下找到 RAG 跑批记录，请先运行 `python run.py --task rag-layered ...`")
 
 # ================= Tab 2: Agent 轨迹回放 =================
 with tab2:
     st.subheader("Agent 死循环与异常恢复分析")
-    st.markdown("读取 `agent_report.json`，回放 Thought -> Action -> Observation 全过程，自动高亮异常。")
 
-    # 模拟一个死循环的 Trace 数据
-    st.info("【当前正在回放】Case: A3 (纽约查天气超时死循环)")
+    agent_dir = get_latest_run_dir("agent-trajectory")
+    if agent_dir:
+        st.success(f"已加载真实跑批数据：`{agent_dir}`")
+        agent_json_path = os.path.join(agent_dir, "agent_report.json")
 
-    mock_trace = [
-        {"step": 1, "type": "Thought", "content": "用户要查纽约天气，我调用 get_weather"},
-        {"step": 2, "type": "Action", "content": "get_weather(city='纽约')"},
-        {"step": 3, "type": "Observation", "content": "Error: 未找到城市 '纽约' 的天气数据"},
-        {"step": 4, "type": "Thought", "content": "报错了，我再试一次，可能参数不对"},
-        {"step": 5, "type": "Action", "content": "get_weather(city='纽约')"},
-        {"step": 6, "type": "Observation", "content": "Error: 未找到城市 '纽约' 的天气数据"},
-        {"step": 7, "type": "Action", "content": "get_weather(city='纽约')"},
-        {"step": 8, "type": "Observation", "content": "Error: 未找到城市 '纽约' 的天气数据"}
-    ]
+        if os.path.exists(agent_json_path):
+            with open(agent_json_path, "r", encoding="utf-8") as f:
+                agent_data = json.load(f)
 
-    for t in mock_trace:
-        if t["type"] == "Thought":
-            st.write(f"🤔 **Thought**: {t['content']}")
-        elif t["type"] == "Action":
-            st.code(f"Action: {t['content']}", language="python")
-        elif t["type"] == "Observation":
-            if "Error" in t["content"]:
-                st.error(f"⚠️ Observation: {t['content']}")
-            else:
-                st.success(f"✅ Observation: {t['content']}")
+            # 提取所有 case 的 ID 做成下拉框
+            case_ids = [item["id"] for item in agent_data]
+            selected_case = st.selectbox("请选择要回放的 Case：", case_ids)
 
-    st.warning("🛑 **【门禁判定结果】: FAIL** - 触发 `infinite_loop` 规则，已强制熔断！")
+            # 找到选中的那个 case
+            case_detail = next((item for item in agent_data if item["id"] == selected_case), None)
 
-# ================= Tab 3: AI 代码变更审查 (重中之重) =================
+            if case_detail:
+                st.write(f"**任务状态**: {case_detail['check']['status']}")
+                st.write(f"**失败模式**: {case_detail['check'].get('fail_modes', [])}")
+
+                steps = case_detail.get("trajectory", {}).get("steps", [])
+                for s in steps:
+                    if s.get("type") == "Action":
+                        st.code(f"Action: {s.get('tool')}({s.get('args')})", language="python")
+                        obs = s.get("observation", "")
+                        if "Error" in obs:
+                            st.error(f"Observation: {obs}")
+                        else:
+                            st.success(f"Observation: {obs}")
+
+                if "infinite_loop" in case_detail['check'].get('fail_modes', []):
+                    st.warning("🛑 **【门禁判定结果】: FAIL** - 触发 `infinite_loop` 规则，已强制熔断！")
+        else:
+            st.error(f"在 {agent_dir} 中未找到 agent_report.json")
+    else:
+        st.warning("未在 results 目录下找到 Agent 跑批记录，请先运行 `python run.py --task agent-trajectory ...`")
+
+# ================= Tab 3: AI 代码变更审查 =================
 with tab3:
     st.subheader("AI 代码审查与安全门禁 (AI Code Review)")
-    st.markdown("模拟研发提交的 PR 代码。AI 会自动审查漏洞，**强制引用原代码行作为证据**，并触发拦截。")
+    st.markdown(
+        "模拟研发提交的 PR 代码。您可以在下方输入框修改或粘贴代码，AI 会自动审查漏洞，**强制引用原代码行作为证据**，并触发拦截。")
 
-    bad_code = """def get_user_info(username):
+    # 默认填入一段带有漏洞的测试代码，方便演示
+    default_bad_code = """def get_user_info(username):
     # 漏洞1：硬编码敏感密码
     db_password = "admin123456" 
 
@@ -96,10 +135,13 @@ with tab3:
     return cursor.fetchall()
 """
 
-    st.code(bad_code, language="python")
+    # 使用 text_area 让用户可以实时编辑代码
+    input_code = st.text_area("📝 待审查代码 (Python):", value=default_bad_code, height=200)
 
     if st.button("🚀 执行 AI 代码审查", type="primary"):
-        if not executor:
+        if not input_code.strip():
+            st.warning("请输入需要审查的代码。")
+        elif not executor:
             st.error("大模型未初始化，请检查 .env 中的 API Key")
         else:
             with st.spinner("大模型正在逐行审查代码..."):
@@ -107,18 +149,16 @@ with tab3:
 请审查以下代码。如果发现漏洞（如SQL注入、硬编码密码），请必须给出严重等级（高危/低危），并引用原代码的行号作为证据。
 
 【待审查代码】
-{bad_code}
+{input_code}
 
 请严格输出 JSON 格式：
 {{"status": "FAIL", "vulnerabilities": [{{"line": "行号", "type": "漏洞类型", "evidence": "原代码片段", "reason": "原因"}}]}}
 只输出 JSON，不要其他废话。
 """
-                # ================= 核心路由：调用底层 LLM 网关执行审查 =================
-                # 此处复用 AI Eval Harness 的 Executor 核心模块，自动继承 AOP 拦截与流式熔断能力
                 response = executor.call_model(prompt)
 
                 try:
-                    # 解析 JSON
+                    # 容错提取 JSON
                     json_str = response[response.find("{"):response.rfind("}") + 1]
                     result = json.loads(json_str)
 
