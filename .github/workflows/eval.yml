@@ -1,18 +1,18 @@
 name: AI Eval Harness CI
 
 on:
-  pull_request:
-    branches: [main]
-  push:
-    branches: [main]
+  # 1. 关掉自动触发，省钱！
+  # push:
+  #   branches: [main]
+  # pull_request:
+  #   branches: [main]
 
-  # ====== 新增：夜间红队定时轰炸 ======
-  #schedule:
-  #  # 每天 UTC 18:00 (北京时间凌晨 2:00) 自动触发
-  #  - cron: '0 18 * * *'
-
-  # ====== 新增：允许手动触发 ======
+  # 2. 保留手动触发（在网页上点按钮才跑，不点不花钱）
   workflow_dispatch:
+
+  # 3. 定时任务也继续注释掉--夜间红队定时轰炸
+  # schedule:
+  #   - cron: '0 18 * * *'
 
 jobs:
   eval:
