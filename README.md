@@ -122,13 +122,28 @@
 ## 快速开始
 
 ```bash
+
+# 1. 克隆项目
+git clone https://github.com/QA-yilin/ai-eval-harness.git
+cd ai-eval-harness
+
+# 2. 创建虚拟环境并安装依赖
 python -m venv .venv
 source .venv/Scripts/activate
 pip install -r requirements.txt
 
-cp .env.example .env     # 编辑 .env 填入你的 API Key（本地开发用）
+# 3. 配置环境变量
+cp .env.example .env
+# 编辑 .env 填入你的 API Key（本地开发用）
 # GitHub Actions CI 环境下，Key 通过 GitHub Secrets 注入
+
+# 4. 启动可视化质量大屏
+streamlit run app.py
+
 ```
+
+💡 使用提示：streamlit run app.py 启动的是一个常驻的 Web 服务，浏览器会自动打开 http://localhost:8501 体验完整大屏。
+如果需要同时在后台跑批（执行 run.py）或运行门禁检查，请另开一个终端窗口。当需要关闭大屏服务时，在终端按 Ctrl + C 即可。
 
 ## 核心命令
 
