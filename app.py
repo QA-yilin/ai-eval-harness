@@ -6,14 +6,29 @@ import plotly.express as px
 import pandas as pd
 from core.executor import Executor
 from dotenv import load_dotenv
+from core.image_guard import AIGCImageGuard
 
 load_dotenv()
 
 # ================= 页面基础配置 =================
 st.set_page_config(page_title="AI 工程效能与质量门禁平台", page_icon="🛡️", layout="wide")
+
+# ================= 新增：自定义 CSS 去除顶部留白 =================
+st.markdown("""
+    <style>
+        /* 减少顶部主容器的 padding */
+        .block-container {
+            padding-top: 2rem !important;
+            padding-bottom: 0rem !important;
+        }
+        /* 隐藏 Streamlit 默认的顶部工具栏（可选） */
+        header {visibility: hidden;}
+    </style>
+""", unsafe_allow_html=True)
+# =================================================================
+
 st.title("🛡️ AI 工程效能与质量门禁平台 (Harness V2.0)")
 st.markdown("---")
-
 
 # ================= 初始化 Executor =================
 @st.cache_resource
@@ -25,9 +40,7 @@ def get_executor():
     except Exception as e:
         return None
 
-
 executor = get_executor()
-
 
 # ================= 辅助函数：读取最新结果 =================
 def get_latest_run_dir(prefix):
@@ -44,9 +57,8 @@ def get_latest_run_dir(prefix):
     dirs.sort(reverse=True)
     return os.path.join(results_dir, dirs[0])
 
-
 # ================= 页面 Tab 划分 =================
-tab1, tab2, tab3 = st.tabs(["📊 质量看板 (RAG诊断)", "🤖 Agent 轨迹回放", "🔍 AI 代码变更审查"])
+tab1, tab2, tab3, tab4 = st.tabs(["📊 质量看板 (RAG诊断)", "🤖 Agent 轨迹回放", "🔍 AI 代码变更审查", "🖼️ AIGC图像质检"])
 
 # ================= Tab 1: 质量看板 =================
 with tab1:
@@ -170,3 +182,25 @@ with tab3:
                 except Exception as e:
                     st.write("解析失败，原始输出如下：")
                     st.write(response)
+
+# ================= Tab 4: AIGC 图像防伪 =================
+with tab4:
+    st.subheader("🖼️ AIGC 图像防伪质检 (PHash)")
+    st.markdown("针对 AIGC 电商场景，使用感知哈希 (PHash) 提取图像结构特征，精准识别像素级篡改。")
+
+    col1, col2 = st.columns(2)
+    with col1:
+        # 注意看，大屏展示图片也用到了根目录拼接
+        st.image(os.path.join("datasets", "images", "official_bag.png"), caption="官方原图", width=300)
+    with col2:
+        st.image(os.path.join("datasets", "images", "tampered_bag.png"), caption="被篡改图 (标签被改)", width=300)
+
+    if st.button("🚀 执行图像防伪校验"):
+        guard = AIGCImageGuard()
+        res = guard.verify_image_integrity("datasets/images/official_bag.png", "datasets/images/tampered_bag.png")
+
+        if res["status"] == "FAIL":
+            st.error(res["message"])
+            st.write(f"**差异值**: `{res['diff_score']}` (阈值: 5)")
+        else:
+            st.success(res["message"])
