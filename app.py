@@ -58,7 +58,7 @@ def get_latest_run_dir(prefix):
     return os.path.join(results_dir, dirs[0])
 
 # ================= 页面 Tab 划分 =================
-tab1, tab2, tab3, tab4 = st.tabs(["📊 质量看板 (RAG诊断)", "🤖 Agent 轨迹回放", "🔍 AI 代码变更审查", "🖼️ AIGC图像质检"])
+tab1, tab2, tab3, tab4, tab5 = st.tabs(["📊 质量看板 (RAG诊断)", "🤖 Agent 轨迹回放", "🔍 AI 代码变更审查", "🖼️ AIGC图像质检", "⚡LLM接口性能压测看板"])
 
 # ================= Tab 1: 质量看板 =================
 with tab1:
@@ -204,3 +204,73 @@ with tab4:
             st.write(f"**差异值**: `{res['diff_score']}` (阈值: 5)")
         else:
             st.success(res["message"])
+
+# ================= Tab5 ⚡ LLM接口性能压测【新增】 =================
+with tab5:
+    st.subheader("⚡ LLM流式接口性能压测（TTFT / 总耗时）")
+    perf_dir = get_latest_run_dir("perf_deepseek_async")
+    if perf_dir:
+        st.success(f"加载最新压测结果目录：`{perf_dir}`")
+        report_path = os.path.join(perf_dir, "perf_test_report.json")
+        if os.path.exists(report_path):
+            with open(report_path, "r", encoding="utf-8") as f:
+                perf_report = json.load(f)
+
+            # 基础汇总，改用markdown表格，完全普通文本，字号和其他tab一模一样
+            st.markdown("#### 📋 基础汇总")
+            md_table = f"""
+|总请求数|最大并发|成功数|失败数|成功率(%)|
+|---|---|---|---|---|
+|{perf_report["total"]}|{perf_report["max_concurrency"]}|{perf_report["success_count"]}|{perf_report["error_count"]}|{perf_report["success_rate"]}|
+"""
+            st.markdown(md_table)
+
+            st.divider()
+            ttft_stats = perf_report.get("ttft_stats", {})
+            total_stats = perf_report.get("total_time_stats", {})
+
+            if ttft_stats and total_stats:
+                st.markdown("### 🕐 TTFT首字延迟统计 (ms)")
+                ttft_md = f"""
+|平均TTFT|P50|P90|P95|P99|最小值|最大值|
+|---|---|---|---|---|---|---|
+|{ttft_stats["mean"]}|{ttft_stats["p50"]}|{ttft_stats["p90"]}|{ttft_stats["p95"]}|{ttft_stats["p99"]}|{ttft_stats["min"]}|{ttft_stats["max"]}|
+"""
+                st.markdown(ttft_md)
+
+                st.markdown("### ⏱️ 请求完整总耗时统计 (ms)")
+                total_md = f"""
+|平均总耗时|P50|P95|最小值|最大值|
+|---|---|---|---|---|
+|{total_stats["mean"]}|{total_stats["p50"]}|{total_stats["p95"]}|{total_stats["min"]}|{total_stats["max"]}|
+"""
+                st.markdown(total_md)
+
+                # 原始明细dataframe绘图
+                details_df = pd.DataFrame(perf_report["details"])
+                success_df = details_df[details_df["status"]=="success"]
+
+                st.divider()
+                st.markdown("#### 📈 TTFT分布直方图（成功请求）")
+                fig_ttft = px.histogram(success_df, x="ttft", nbins=20, title="TTFT(ms)分布", color_discrete_sequence=["#4C78A8"])
+                st.plotly_chart(fig_ttft, use_container_width=True)
+
+                st.markdown("#### 📈 完整总耗时分布直方图（成功请求）")
+                fig_total = px.histogram(success_df, x="total_time", nbins=20, title="总耗时(ms)分布", color_discrete_sequence=["#72B7B2"])
+                st.plotly_chart(fig_total, use_container_width=True)
+
+                with st.expander("🔍 查看全部原始请求明细"):
+                    st.dataframe(details_df, use_container_width=True)
+
+                error_df = details_df[details_df["status"]!="success"]
+                if len(error_df)>0:
+                    with st.expander(f"⚠️ 错误样本（共{len(error_df)}条）"):
+                        st.dataframe(error_df, use_container_width=True)
+            else:
+                st.info("报告内无成功统计数据，全部请求失败（如余额不足402），可展开查看details明细")
+                with st.expander("🔍 全部原始请求明细"):
+                    st.dataframe(pd.DataFrame(perf_report["details"]), use_container_width=True)
+        else:
+            st.error(f"目录下找不到 perf_test_report.json : {perf_dir}")
+    else:
+        st.warning("尚未找到性能压测结果，请在终端执行：`python performance_test_async.py` 生成results下压测报告")
