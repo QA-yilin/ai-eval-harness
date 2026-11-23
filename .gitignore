@@ -22,6 +22,8 @@ append_*.py
 # 对比产出
 diff_*.md
 diff_*.json
+diff_agent/
+diff_injection/
 
 #执行结果
 results/

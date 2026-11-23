@@ -60,6 +60,10 @@
 - **AIGC 图像防伪质检**：针对电商多模态场景，落地 PHash 感知哈希校验引擎，精准识别图像像素级篡改（如伪造标签），并集成至可视化大屏阻断拦截。
 - **流式 TTFT 压测**：新增 Stream 流式请求脚本（`performance_test.py`），精确计算首字延迟（P95=774ms），保障大模型专属 SLA。
 - **LLM流式接口性能压测**：asyncio+aiohttp异步压测，Semaphore并发限流，采集TTFT、完整耗时、P50/P90/P95/P99指标，自动落盘JSON报告，看板可视化。
+- **Agent专项三大评测模块【新增完整套件】**，覆盖负向边界、记忆能力、调度多任务场景，遵循统一设计范式：task业务流水线 + evaluator打分器 + 独立单元测试；打分器逻辑回归完全绕过大模型执行，不依赖业务数据集做边界校验。
+  1. **Agent‑Negative 负向边界评测**：面向信息缺失、工具报错重试、非法工具、死循环重试场景；4类故障标签`planning_error / infinite_loop / wrong_tool_call / early_termination`；`clarification_required`仅豁免规划错误；工具合法重试过滤仅作用规划比对，死循环/非法工具依旧基于原始工具序列判定；task增加样本一致性告警、修复轨迹回填覆盖bug。
+  2. **Agent‑Memory 记忆评测**：验证Agent会话记忆读写、上下文遗忘、记忆污染、记忆覆盖场景；检测记忆是否正确写入、读取、丢弃；识别记忆漏写、错误覆盖、无效更新等失败模式。
+  3. **Agent‑Schedule 调度评测**：验证多任务调度、任务优先级、任务中断恢复、并发任务编排；检测调度乱序、任务遗漏、优先级失效、中断无法恢复等调度类缺陷。
 
 ---
 
@@ -197,6 +201,23 @@ python run.py --task judge-calibration --model deepseek --dataset judge-calibrat
 
 # Judge 校准（历史最优：Kappa 1.0，V2.0已废弃此 jsonl 数据集）
 python run.py --task judge-calibration --model deepseek --dataset judge-calibration-v1-optimized
+
+# Agent‑negative 负向边界评测流水线（CI门禁，真实模型评测）
+python run.py --task agent-negative --model deepseek --dataset agent-negative
+# agent‑negative evaluator单元测试（本地开发，不调用大模型）
+python -B tests/test_agent_negative_eval.py
+
+# Agent‑memory 记忆能力评测流水线（CI门禁）
+python run.py --task agent-memory --model deepseek --dataset agent-memory
+# agent‑memory evaluator单元测试
+python -B tests/test_agent_memory_eval.py
+
+# Agent‑schedule 调度编排评测流水线（CI门禁）
+python run.py --task agent-schedule --model deepseek --dataset agent-schedule
+# agent‑schedule evaluator单元测试
+python -B tests/test_agent_schedule_eval.py
+
+
 ```
 
 ## 支持的任务
@@ -206,6 +227,9 @@ python run.py --task judge-calibration --model deepseek --dataset judge-calibrat
 | `rag-layered` | deepseek | RAG 三层诊断 |
 | judge-calibration | deepseek | Judge 校准（初始 0.537 → 优化 1.0） |
 | `agent-trajectory` | deepseek | Agent 轨迹五查 |
+| `agent‑negative` | deepseek | Agent 负向边界评测：信息缺失、工具报错重试、非法工具、死循环归因，输出 pass_rate 对接门禁 |
+| `agent‑memory` | deepseek | Agent 记忆评测：记忆读写、遗忘、污染、覆盖场景检测，校验会话记忆正确性 |
+| `agent‑schedule` | deepseek | Agent 调度评测：多任务优先级、中断恢复、任务编排，识别调度乱序与任务丢失缺陷 |
 | `prompt-injection` | deepseek | Prompt 注入防御 |
 
 ## 对比两次运行
@@ -258,8 +282,58 @@ results/
     ├── rag_model_comparison.jsonl
     └── rag_comparison_report.json
 ```
-
 任何时候能复现某次运行。
+
+### 新增三大Agent评测模块变更记录
+feat (agent-suite): 新增 Agent 三大专项评测模块：负向边界 / 记忆 / 调度评测；统一采用 task‑evaluator‑unittest 三层架构
+
+> 统一工程范式
+>
+> 1. task 任务流水线：加载业务数据集，调用 executor 运行真实 Agent 模型，evaluator 批量打分，输出报告对接 CI 门禁；增加样本数量 & ID 一致性告警，异常仅输出 warning，不阻断流水线。
+> 2. evaluator 打分器：实现对应场景专属失败模式归因。
+> 3. 单元测试：完全绕过模型执行，注入预置模拟轨迹回归打分器边界；**业务数据集不作为打分器回归用例**，业务数据集会被真实模型运行覆盖预置轨迹。
+
+#### 1. agent‑negative 负向边界评测
+
+涉及文件：
+
+- `tasks/agent_negative_task.py`
+- `core/evaluator.py`（`_eval_agent_negative`）
+- `tests/test_agent_negative_eval.py`
+- task：修复 traj_map 无条件覆盖 trajectory bug；新增样本一致性告警。
+- evaluator：4 类故障标签 `planning_error / infinite_loop / wrong_tool_call / early_termination`；工具 Error 后单次合法重试过滤，过滤仅用于 planning_error 比对；`clarification_required=true`仅豁免 planning_error。
+- 单元测试覆盖：合法重试过滤、死循环、非法工具调用、澄清豁免、空期望序列。
+
+#### 2. agent‑memory 记忆评测
+
+涉及文件：
+
+- `tasks/agent_memory_task.py`
+- `core/evaluator.py`（`_eval_agent_memory`）
+- `tests/test_agent_memory_eval.py`
+- task：记忆场景评测流水线，内置样本一致性告警。
+- evaluator：识别记忆漏写、错误覆盖、记忆污染、遗忘、无效更新等失败模式；校验记忆写入 / 读取真值。
+- 单元测试覆盖：记忆漏写、错误覆盖、记忆污染、正常读写边界。
+
+#### 3. agent‑schedule 调度评测
+
+涉及文件：
+
+- `tasks/agent_schedule_task.py`
+- `core/evaluator.py`（`_eval_agent_schedule`）
+- `tests/test_agent_schedule_eval.py`
+- task：多任务调度评测流水线，内置样本一致性告警。
+- evaluator：检测任务乱序、任务丢失、优先级失效、中断恢复失败等调度缺陷。
+- 单元测试覆盖：优先级校验、任务中断、并发编排、任务丢失边界。
+
+> 
+> 通用排坑提示
+> 
+> 
+> 1. 业务流水线出现 FAIL，代表**模型 / Agent 业务行为问题，不是评测框架 bug**。
+> 2. 对应模块单元测试全部 PASS，代表 evaluator 打分器逻辑本身正确。
+> 3. 禁止将临时 debug 打印提交至版本库。
+> 4. 业务数据集内模拟样例仅用于模型测试，不能用来验证 evaluator 打分逻辑。
 
 ## CI 状态
 

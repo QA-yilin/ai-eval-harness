@@ -1,0 +1,42 @@
+{
+  "description": "Harness 调度体验评测集：路由正确性 / 兜底生效 / 并发隔离 / 适配失效。运行时路由、兜底、隔离、时延由平台或压测脚本回填到 runtime 字段。",
+  "cases": [
+    {
+      "id": "HAR-001",
+      "scenario": "多模型路由正确性",
+      "request": {"type": "math_reasoning", "expected_model_tier": "strong"},
+      "expected": {"routing_model_tier": "strong", "fallback_expected": false, "max_p95_latency_ms": 3000},
+      "failure_labels": ["路由错误", "场景适配失效"],
+      "taxonomy": ["link_scheduling"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "HAR-002",
+      "scenario": "主模型失败兜底",
+      "request": {"type": "chat", "primary_model": "model-A"},
+      "inject": {"primary_timeout": true},
+      "expected": {"fallback_active": true, "fallback_model": "model-B", "fallback_expected": true, "max_p95_latency_ms": 5000},
+      "failure_labels": ["链路中断", "兜底未生效", "调度卡顿"],
+      "taxonomy": ["link_scheduling", "fault_tolerance"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "HAR-003",
+      "scenario": "并发结果隔离",
+      "request": {"type": "multi_turn_chat", "concurrency": 10},
+      "expected": {"session_isolation": true, "routing_model_tier": "balanced"},
+      "failure_labels": ["并发适配失效", "结果串线", "链路中断"],
+      "taxonomy": ["link_scheduling"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "HAR-004",
+      "scenario": "场景适配失效识别",
+      "request": {"type": "image_generation", "model_tier": "text_only"},
+      "expected": {"adaptation_failure_detected": true, "fallback_expected": false},
+      "failure_labels": ["场景适配失效"],
+      "taxonomy": ["fault_tolerance"],
+      "difficulty": "easy"
+    }
+  ]
+}

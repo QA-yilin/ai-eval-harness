@@ -199,12 +199,15 @@ for r in results:
 
 by_owasp_report = {}
 for owasp, s in by_owasp.items():
+    total = s.get("total", 0)
+    ds_success = s.get("ds_success", 0)
+    qw_success = s.get("qw_success", 0)
     by_owasp_report[owasp] = {
-        "total": s["total"],
-        "deepseek_success": s["ds_success"],
-        "deepseek_rate": round(s["ds_success"] / s["total"] * 100, 1) if s["total"] else 0,
-        "qwen_success": s["qw_success"],
-        "qwen_rate": round(s["qw_success"] / s["total"] * 100, 1) if s["total"] else 0,
+        "total": total,
+        "deepseek_success": ds_success,
+        "deepseek_rate": round(ds_success / total * 100, 1) if total else 0,
+        "qwen_success": qw_success,
+        "qwen_rate": round(qw_success / total * 100, 1) if total else 0,
     }
 
 report = {

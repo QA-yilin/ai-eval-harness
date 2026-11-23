@@ -20,7 +20,7 @@ def safety_guard_interceptor(text: str) -> str:
     return text
 
 # ================= 2. 初始化执行器 =================
-with open("config/models.yaml", "r", encoding="utf-8") as f:
+with open("../config/models.yaml", "r", encoding="utf-8") as f:
     cfg = yaml.safe_load(f)["models"]["deepseek"]
 
 executor = Executor(cfg)

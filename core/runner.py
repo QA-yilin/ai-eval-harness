@@ -51,6 +51,15 @@ class Runner:
         elif self.task_name == "prompt-injection":
             from tasks.injection_task import run_injection_task
             run_injection_task(task_cfg, executor, evaluator, reporter, dataset_cfg)
+        elif self.task_name == "agent-negative":
+            from tasks.agent_negative_task import run_agent_negative_task
+            run_agent_negative_task(task_cfg, executor, evaluator, reporter, dataset_cfg)
+        elif self.task_name == "memory":
+            from tasks.memory_task import run_memory_task
+            run_memory_task(task_cfg, executor, evaluator, reporter, dataset_cfg)
+        elif self.task_name == "harness":
+            from tasks.harness_task import run_harness_task
+            run_harness_task(task_cfg, executor, evaluator, reporter, dataset_cfg)
 
         else:
             raise ValueError(f"未知任务: {self.task_name}")

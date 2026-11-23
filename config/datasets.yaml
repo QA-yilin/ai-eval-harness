@@ -29,3 +29,17 @@ datasets:
     path: datasets/golden-set-19.json
     format: json
 
+  agent-negative:
+    type: agent
+    path: datasets/agent/agent-negative-cases.json
+    format: json
+
+  memory-cases:
+    type: memory
+    path: datasets/memory/memory-cases.json
+    format: json
+
+  harness-cases:
+    type: harness
+    path: datasets/harness/harness-cases.json
+    format: json

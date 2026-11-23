@@ -28,3 +28,22 @@ tasks:
     evaluators: [ injection_defense ]
     output_prefix: prompt-injection
 
+  agent-negative:
+    description: Agent 负向轨迹评测（歧义/漏执行/错调用/中断/逻辑混乱）
+    dataset: agent-negative
+    evaluators: [ agent_negative ]
+    output_prefix: agent-negative
+
+  memory:
+    description: 大模型记忆体验评测（留存/一致性/冲突/丢失/冗余/遗忘）
+    dataset: memory-cases
+    evaluators: [ memory ]
+    output_prefix: memory
+
+  harness:
+    description: Harness 调度体验评测（路由/兜底/隔离/时效/适配）
+    dataset: harness-cases
+    evaluators: [ harness ]
+    output_prefix: harness
+
+

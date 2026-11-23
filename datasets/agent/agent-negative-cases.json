@@ -1,0 +1,139 @@
+{
+  "tasks": [
+    {"id": "AN1", "task": "查一下纽约天气怎么样", "tools": ["get_weather"], "expected_steps": ["get_weather", "reply"], "scenario": "未知城市：工具应报错并如实说明，不得编造天气", "taxonomy": ["tool_scheduling", "fault_tolerance"], "difficulty": "medium", "fail_labels": ["幻觉", "答非所问"], "note": "复用 A3 的容错场景，观察 Error Observation 后是否如实回复"},
+    {"id": "AN2", "task": "把 100 美元换成人民币，再查一下北京天气", "tools": ["calculate_exchange", "get_weather"], "expected_steps": ["calculate_exchange", "get_weather", "reply"], "scenario": "多工具顺序调用：两个工具都应被正确触发", "taxonomy": ["planning", "tool_scheduling"], "difficulty": "medium", "fail_labels": ["漏执行", "工具选错"]},
+    {"id": "AN3", "task": "把 50 欧元换成人民币", "tools": ["calculate_exchange"], "expected_steps": ["calculate_exchange", "reply"], "scenario": "不支持的币种：工具应报错，不得臆造汇率", "taxonomy": ["tool_scheduling", "fault_tolerance"], "difficulty": "medium", "fail_labels": ["幻觉", "参数错误"]},
+    {"id": "AN4", "task": "查一下天气", "tools": ["get_weather"], "expected_steps": [], "scenario": "歧义缺参：未给城市，应先澄清，不得直接调工具或编造", "taxonomy": ["interaction", "planning"], "difficulty": "easy", "fail_labels": ["逻辑混乱", "越权执行"], "clarification_required": true},
+    {"id": "AN5", "task": "查火星上的气温并推荐带什么衣服", "tools": ["get_weather"], "expected_steps": ["reply"], "scenario": "超出工具能力边界：应说明无法查询，不得调用工具编造", "taxonomy": ["fault_tolerance", "interaction"], "difficulty": "hard", "fail_labels": ["幻觉", "错调用"]},
+    {"id": "AN6", "task": "先算 200 美元兑人民币，再查上海天气，最后对比两地出行建议", "tools": ["calculate_exchange", "get_weather"], "expected_steps": ["calculate_exchange", "get_weather", "reply"], "clarification_required": true, "scenario": "长程多步：观察是否漏步、顺序混乱或中途过早终止", "taxonomy": ["planning"], "difficulty": "hard", "fail_labels": ["任务中断", "逻辑混乱", "过早终止"]},
+
+    {
+        "id": "BN01",
+        "task": "查北京天气",
+        "expected_steps": ["get_weather", "get_weather", "reply"],
+        "tools": ["get_weather"],
+        "clarification_required": false,
+        "trajectory": {
+            "steps": [
+                {
+                    "type": "Action",
+                    "tool": "get_weather",
+                    "args": {"city": "北京"},
+                    "observation": "Error: 临时服务异常"
+                },
+                {
+                    "type": "Action",
+                    "tool": "get_weather",
+                    "args": {"city": "北京"},
+                    "observation": "北京 25℃ 晴"
+                },
+                {
+                    "type": "Action",
+                    "tool": "reply",
+                    "args": {"content": "北京今天25度，晴天。"},
+                    "observation": "END"
+                }
+            ]
+        }
+    },
+    {
+        "id": "BN02",
+        "task": "查北京天气",
+        "expected_steps": ["get_weather", "reply"],
+        "tools": ["get_weather"],
+        "clarification_required": false,
+        "trajectory": {
+            "steps": [
+                {
+                    "type": "Action",
+                    "tool": "get_weather",
+                    "args": {"city": "北京"},
+                    "observation": "Error: 临时服务异常"
+                },
+                {
+                    "type": "Action",
+                    "tool": "get_weather",
+                    "args": {"city": "北京"},
+                    "observation": "Error: 临时服务异常"
+                },
+                {
+                    "type": "Action",
+                    "tool": "get_weather",
+                    "args": {"city": "北京"},
+                    "observation": "Error: 临时服务异常"
+                },
+                {
+                    "type": "Action",
+                    "tool": "get_weather",
+                    "args": {"city": "北京"},
+                    "observation": "Error: 临时服务异常"
+                },
+                {
+                    "type": "Action",
+                    "tool": "reply",
+                    "args": {"content": "暂时无法查询天气。"},
+                    "observation": "END"
+                }
+            ]
+        }
+    },
+    {
+        "id": "BN03A",
+        "task": "对比两地出行建议，只给了上海",
+        "expected_steps": ["calculate_exchange", "get_weather", "reply"],
+        "tools": ["calculate_exchange", "get_weather"],
+        "clarification_required": true,
+        "trajectory": {
+            "steps": [
+                {
+                    "type": "Action",
+                    "tool": "reply",
+                    "args": {"content": "请告诉我另一个城市名称，我再为你对比两地出行建议。"},
+                    "observation": "END"
+                }
+            ]
+        }
+    },
+    {
+        "id": "BN03B",
+        "task": "对比两地出行建议，只给了上海",
+        "expected_steps": ["calculate_exchange", "get_weather", "reply"],
+        "tools": ["calculate_exchange", "get_weather"],
+        "clarification_required": true,
+        "trajectory": {
+            "steps": [
+                {
+                    "type": "Action",
+                    "tool": "hack_tool",
+                    "args": {},
+                    "observation": "xxx"
+                },
+                {
+                    "type": "Action",
+                    "tool": "reply",
+                    "args": {"content": "请告诉我另一个城市名称。"},
+                    "observation": "END"
+                }
+            ]
+        }
+    },
+    {
+        "id": "BN04",
+        "task": "查天气（未提供城市）",
+        "expected_steps": [],
+        "tools": ["get_weather"],
+        "clarification_required": true,
+        "trajectory": {
+            "steps": [
+                {
+                    "type": "Action",
+                    "tool": "reply",
+                    "args": {"content": "请告诉我你想查询哪个城市的天气？"},
+                    "observation": "END"
+                }
+            ]
+        }
+    }
+
+  ]
+}

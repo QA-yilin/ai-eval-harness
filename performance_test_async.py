@@ -148,27 +148,27 @@ async def run_concurrency_test():
 
     if success_list:
         print("\n--- TTFT首字延迟(ms) ---")
-        s = report["ttft_stats"]
-        print(f"平均TTFT: {s['mean']}")
-        print(f"P50 TTFT: {s['p50']}")
-        print(f"P90 TTFT: {s['p90']}")
-        print(f"P95 TTFT: {s['p95']}")
-        print(f"P99 TTFT: {s['p99']}")
-        print(f"最大TTFT: {s['max']}")
-        print(f"最小TTFT: {s['min']}")
+        s = report.get("ttft_stats", {})
+        print(f"平均TTFT: {s.get('mean', 0)}")
+        print(f"P50 TTFT: {s.get('p50', 0)}")
+        print(f"P90 TTFT: {s.get('p90', 0)}")
+        print(f"P95 TTFT: {s.get('p95', 0)}")
+        print(f"P99 TTFT: {s.get('p99', 0)}")
+        print(f"最大TTFT: {s.get('max', 0)}")
+        print(f"最小TTFT: {s.get('min', 0)}")
 
         print("\n--- 请求总耗时(ms) ---")
-        t = report["total_time_stats"]
-        print(f"平均总耗时: {t['mean']}")
-        print(f"P50总耗时: {t['p50']}")
-        print(f"P95总耗时: {t['p95']}")
-        print(f"最大总耗时: {t['max']}")
-        print(f"最小总耗时: {t['min']}")
+        t = report.get("total_time_stats", {})
+        print(f"平均总耗时: {t.get('mean', 0)}")
+        print(f"P50总耗时: {t.get('p50', 0)}")
+        print(f"P95总耗时: {t.get('p95', 0)}")
+        print(f"最大总耗时: {t.get('max', 0)}")
+        print(f"最小总耗时: {t.get('min', 0)}")
 
     if error_list:
         print(f"\n错误样例(最多展示5条):")
         for e in error_list[:5]:
-            print(f"  {e['status']}")
+            print(f"  {e.get('status', 'unknown')}")
 
 
 if __name__ == "__main__":

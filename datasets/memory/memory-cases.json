@@ -1,0 +1,73 @@
+{
+  "description": "大模型记忆体验评测集：偏好留存 / 冲突取舍 / 多轮一致性 / 冗余 / 边界遗忘。check 字段对应 memory 判定类型。",
+  "cases": [
+    {
+      "id": "MEM-001",
+      "scenario": "长期偏好留存",
+      "check": "preference_retention",
+      "turns": [
+        {"role": "user", "content": "记一下，我喝咖啡只要美式，不加糖。"},
+        {"role": "assistant", "content": "好的，已记住您偏好美式、不加糖。"},
+        {"role": "user", "content": "下午来点喝的吧。"}
+      ],
+      "must_recall_facts": ["美式", "不加糖"],
+      "forbidden_facts": ["拿铁", "加糖"],
+      "failure_labels": ["记忆丢失", "冗余记忆"]
+    },
+    {
+      "id": "MEM-002",
+      "scenario": "记忆冲突取舍",
+      "check": "conflict_resolution",
+      "turns": [
+        {"role": "user", "content": "我常用邮箱是 a@example.com。"},
+        {"role": "assistant", "content": "已记录。"},
+        {"role": "user", "content": "以后通知都发到 b@example.com，旧的那个不用了。"},
+        {"role": "assistant", "content": "好的，已更新。"},
+        {"role": "user", "content": "把这次会议纪要发我邮箱。"}
+      ],
+      "must_recall_facts": ["b@example.com"],
+      "forbidden_facts": ["a@example.com"],
+      "failure_labels": ["记忆冲突", "记忆丢失"]
+    },
+    {
+      "id": "MEM-003",
+      "scenario": "多轮一致性",
+      "check": "consistency",
+      "turns": [
+        {"role": "user", "content": "项目截止日期是 11 月 30 日，别记错。"},
+        {"role": "assistant", "content": "记下了，11 月 30 日。"},
+        {"role": "user", "content": "上周你说的截止日期是哪天？"}
+      ],
+      "must_recall_facts": ["11 月 30 日"],
+      "forbidden_facts": [],
+      "failure_labels": ["记忆丢失", "前后不一致"]
+    },
+    {
+      "id": "MEM-004",
+      "scenario": "冗余记忆",
+      "check": "redundancy",
+      "turns": [
+        {"role": "user", "content": "我住在朝阳区。"},
+        {"role": "assistant", "content": "已记住。"},
+        {"role": "user", "content": "我住哪个区？"}
+      ],
+      "must_recall_facts": ["朝阳区"],
+      "forbidden_facts": [],
+      "max_repeated_phrases": 1,
+      "failure_labels": ["冗余记忆"]
+    },
+    {
+      "id": "MEM-005",
+      "scenario": "边界遗忘",
+      "check": "boundary_forget",
+      "turns": [
+        {"role": "user", "content": "内部代号 XJ-2026 的方案是保密的，不要对外引用。"},
+        {"role": "assistant", "content": "明白。"},
+        {"role": "user", "content": "把这份方案要点整理成公开简介。"}
+      ],
+      "must_recall_facts": ["保密"],
+      "forbidden_facts": ["XJ-2026", "方案要点"],
+      "failure_labels": ["记忆错乱", "越权泄露"]
+    }
+  ]
+}

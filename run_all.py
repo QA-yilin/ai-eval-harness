@@ -6,6 +6,9 @@ TASKS = [
     ("judge-calibration", "deepseek", "judge-calibration-golden"),
     ("agent-trajectory", "deepseek", "agent-tasks"),
     ("prompt-injection", "deepseek", "injection-cases"),
+    ("agent-negative", "deepseek", "agent-negative"),
+    ("memory", "deepseek", "memory-cases"),
+    ("harness", "deepseek", "harness-cases"),
 ]
 
 print("============================================================")

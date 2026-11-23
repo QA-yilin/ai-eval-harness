@@ -6,6 +6,17 @@ import yaml
 from datetime import datetime
 
 
+def safe_load_json(path):
+    """安全加载json，捕获IO/JSON解析异常，出错返回空dict"""
+    if not os.path.exists(path):
+        return {}
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except (IOError, OSError, json.JSONDecodeError):
+        return {}
+
+
 def load_yaml(path):
     with open(path, "r", encoding="utf-8") as f:
         return yaml.safe_load(f)
@@ -28,40 +39,47 @@ def find_latest_run(results_dir, task_name):
 def load_run_metrics(run_dir, task_name):
     """加载某次运行的关键指标"""
     metrics = {}
-
     if task_name == "rag-layered":
         path = os.path.join(run_dir, "layer_summary.json")
-        if os.path.exists(path):
-            data = json.load(open(path, encoding="utf-8"))
-            dist = data.get("first_failing_distribution", {})
-            metrics["first_failing.retrieval_layer"] = dist.get("retrieval_layer", 0)
-            metrics["first_failing.understanding_layer"] = dist.get("understanding_layer", 0)
-            metrics["first_failing.generation_layer"] = dist.get("generation_layer", 0)
-
-
+        data = safe_load_json(path)
+        dist = data.get("first_failing_distribution", {})
+        metrics["first_failing.retrieval_layer"] = dist.get("retrieval_layer", 0)
+        metrics["first_failing.understanding_layer"] = dist.get("understanding_layer", 0)
+        metrics["first_failing.generation_layer"] = dist.get("generation_layer", 0)
     elif task_name == "judge-calibration":
         path = os.path.join(run_dir, "kappa_report.json")
-        if os.path.exists(path):
-            data = json.load(open(path, encoding="utf-8"))
-            metrics["cohen_kappa"] = data.get("cohen_kappa", 0)
-            metrics["mae"] = data.get("mae", 0)
-            metrics["raw_agreement"] = data.get("raw_agreement", 0)
-            metrics["evidence_coverage"] = data.get("evidence_coverage", 0)
-
+        data = safe_load_json(path)
+        metrics["cohen_kappa"] = data.get("cohen_kappa", 0)
+        metrics["mae"] = data.get("mae", 0)
+        metrics["raw_agreement"] = data.get("raw_agreement", 0)
+        metrics["evidence_coverage"] = data.get("evidence_coverage", 0)
     elif task_name == "agent-trajectory":
         path = os.path.join(run_dir, "agent_report.json")
-        if os.path.exists(path):
-            data = json.load(open(path, encoding="utf-8"))
+        data = safe_load_json(path)
+        if isinstance(data, list):
             total = len(data)
-            passed = sum(1 for r in data if r["check"]["status"] == "PASS")
+            passed = 0
+            for r in data:
+                check_obj = r.get("check", {})
+                if check_obj.get("status") == "PASS":
+                    passed += 1
             metrics["pass_rate"] = passed / total if total else 0
-
     elif task_name == "prompt-injection":
         path = os.path.join(run_dir, "injection_summary.json")
-        if os.path.exists(path):
-            data = json.load(open(path, encoding="utf-8"))
-            metrics["defense_rate"] = data.get("rate", 0)
-
+        data = safe_load_json(path)
+        metrics["defense_rate"] = data.get("rate", 0)
+    elif task_name == "agent-negative":
+        path = os.path.join(run_dir, "agent_negative_report.json")
+        data = safe_load_json(path)
+        metrics["pass_rate"] = data.get("pass_rate", 0)
+    elif task_name == "memory":
+        path = os.path.join(run_dir, "memory_report.json")
+        data = safe_load_json(path)
+        metrics["pass_rate"] = data.get("pass_rate", 0)
+    elif task_name == "harness":
+        path = os.path.join(run_dir, "harness_report.json")
+        data = safe_load_json(path)
+        metrics["pass_rate"] = data.get("pass_rate", 0)
     return metrics
 
 
@@ -113,11 +131,9 @@ def main():
             if value is None:
                 print(f"    - {metric}: 无数据")
                 continue
-
             ok = check_condition(value, cond["operator"], cond["threshold"])
             status = "✅" if ok else "❌"
             print(f"    {status} {metric}: {value} {cond['operator']} {cond['threshold']}")
-
             if not ok:
                 if cond["action"] == "block":
                     blocked.append((task_name, metric, value, cond["message"]))
@@ -127,21 +143,17 @@ def main():
     print(f"\n{'='*60}")
     print(f"结果汇总")
     print(f"{'='*60}")
-
     if blocked:
         print(f"\n❌ 阻断项 ({len(blocked)}):")
         for t, m, v, msg in blocked:
             print(f"  - [{t}] {m}={v}: {msg}")
-
     if warned:
         print(f"\n⚠️  警告项 ({len(warned)}):")
         for t, m, v, msg in warned:
             print(f"  - [{t}] {m}={v}: {msg}")
-
     if not blocked and not warned:
         print("\n✅ 全部门禁通过")
 
-    # 阻断则退出码 1
     sys.exit(1 if blocked else 0)
 
 
