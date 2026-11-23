@@ -210,12 +210,12 @@ python -B tests/test_agent_negative_eval.py
 # Agent‑memory 记忆能力评测流水线（CI门禁）
 python run.py --task agent-memory --model deepseek --dataset agent-memory
 # agent‑memory evaluator单元测试
-python -B tests/test_agent_memory_eval.py
+#python -B tests/test_agent_memory_eval.py  待后面补齐
 
 # Agent‑schedule 调度编排评测流水线（CI门禁）
 python run.py --task agent-schedule --model deepseek --dataset agent-schedule
 # agent‑schedule evaluator单元测试
-python -B tests/test_agent_schedule_eval.py
+#python -B tests/test_agent_schedule_eval.py 待后面补齐
 
 
 ```
@@ -310,10 +310,9 @@ feat (agent-suite): 新增 Agent 三大专项评测模块：负向边界 / 记�
 
 - `tasks/agent_memory_task.py`
 - `core/evaluator.py`（`_eval_agent_memory`）
-- `tests/test_agent_memory_eval.py`
 - task：记忆场景评测流水线，内置样本一致性告警。
 - evaluator：识别记忆漏写、错误覆盖、记忆污染、遗忘、无效更新等失败模式；校验记忆写入 / 读取真值。
-- 单元测试覆盖：记忆漏写、错误覆盖、记忆污染、正常读写边界。
+- 单元测试覆盖：【待后续补充】
 
 #### 3. agent‑schedule 调度评测
 
@@ -321,10 +320,9 @@ feat (agent-suite): 新增 Agent 三大专项评测模块：负向边界 / 记�
 
 - `tasks/agent_schedule_task.py`
 - `core/evaluator.py`（`_eval_agent_schedule`）
-- `tests/test_agent_schedule_eval.py`
 - task：多任务调度评测流水线，内置样本一致性告警。
 - evaluator：检测任务乱序、任务丢失、优先级失效、中断恢复失败等调度缺陷。
-- 单元测试覆盖：优先级校验、任务中断、并发编排、任务丢失边界。
+- 单元测试覆盖：【待后续补充】
 
 > 
 > 通用排坑提示
