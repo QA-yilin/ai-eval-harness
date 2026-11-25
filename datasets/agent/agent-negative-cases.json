@@ -10,7 +10,7 @@
     {
         "id": "BN01",
         "task": "查北京天气",
-        "expected_steps": ["get_weather", "get_weather", "reply"],
+        "expected_steps": ["get_weather", "reply"],
         "tools": ["get_weather"],
         "clarification_required": false,
         "trajectory": {
@@ -133,6 +133,22 @@
                 }
             ]
         }
+    },
+    {
+      "id": "BN05",
+      "task": "查纽约天气（工具将报错）",
+      "expected_steps": ["get_weather"],
+      "tools": ["get_weather"],
+      "clarification_required": false,
+      "taxonomy": ["fault_tolerance", "planning"],
+      "difficulty": "hard",
+      "fail_labels": ["过早终止", "任务中断"],
+      "note": "工具报错后未给用户任何回复即结束，隔离覆盖 early_termination（此前零覆盖）",
+      "trajectory": {
+        "steps": [
+          {"type": "Action", "tool": "get_weather", "args": {"city": "纽约"}, "observation": "Error: 城市不在支持范围内"}
+        ]
+      }
     }
 
   ]
