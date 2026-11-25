@@ -25,17 +25,32 @@ def load_cases(path):
 def build_report(cases):
     by_node = defaultdict(list)
     label_dist = defaultdict(int)
+    unlabeled_taxonomy = []
+    unlabeled_fail = []
     for c in cases:
-        for node in c.get("taxonomy", []):
-            by_node[node].append(c["id"])
-        for label in c.get("failure_labels", []):
-            label_dist[label] += 1
+        tax = c.get("taxonomy") or []
+        if tax:
+            for node in tax:
+                by_node[node].append(c["id"])
+        else:
+            unlabeled_taxonomy.append(c["id"])
+
+        labels = c.get("fail_labels") or c.get("failure_labels") or []
+        if labels:
+            for label in labels:
+                label_dist[label] += 1
+        else:
+            unlabeled_fail.append(c["id"])
+
     missing = [n for n in ALL_TAXONOMY if n not in by_node]
     return {
         "total_cases": len(cases),
         "coverage": {n: len(ids) for n, ids in sorted(by_node.items())},
         "missing_nodes": missing,
         "failure_label_distribution": dict(label_dist),
+        "taxonomy_coverage_rate": f"{len([n for n in ALL_TAXONOMY if n in by_node])}/{len(ALL_TAXONOMY)}",
+        "unlabeled_taxonomy": unlabeled_taxonomy,
+        "unlabeled_fail_labels": unlabeled_fail,
     }
 
 
